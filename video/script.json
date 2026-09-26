@@ -1,0 +1,63 @@
+{
+  "title": "Running Chaos Backwards",
+  "beats": [
+    { "id": "open", "pad_before": 1.4, "pad_after": 0.8, "lines": [
+      { "show": "This picture is about to be scrambled by chaos.", "say": "This picture is about to be scrambled by chaos.", "b": "sentence" },
+      { "show": "Each step moves every pixel by a simple rule from physics.", "say": "Each step moves every pixel by a simple rule from physics.", "b": "sentence" },
+      { "show": "After a hundred steps, it looks like noise.", "say": "After a hundred steps, it looks like noise.", "b": "sentence" },
+      { "show": "The rule can be run backwards exactly, at least on paper.", "say": "The rule can be run backwards exactly, at least on paper.", "b": "sentence" },
+      { "show": "So let's run it backwards on a computer.", "say": "So let's run it backwards on a computer.", "b": "sentence" },
+      { "show": "On the left, ordinary floating point. On the right, a version that lives on a grid.", "say": "On the left, ordinary floating point. On the right, a version that lives on a grid.", "b": "sentence" },
+      { "show": "Floating point brings back fragments. The grid brings back every pixel.", "say": "Floating point brings back fragments. The grid brings back every pixel.", "b": "paragraph" }
+    ]},
+    { "id": "title", "pad_before": 0.2, "pad_after": 0.6, "lines": [
+      { "show": "Running chaos backwards.", "say": "Running chaos backwards.", "b": "sentence" }
+    ]},
+    { "id": "rotor", "pad_before": 0.4, "pad_after": 1.0, "lines": [
+      { "show": "The rule is the kicked rotor, a standard model of chaos.", "say": "The rule is the kicked rotor, a standard model of chaos.", "b": "sentence" },
+      { "show": "Picture a rod spinning freely, kicked at regular intervals.", "say": "Picture a rod spinning freely, kicked at regular intervals.", "b": "sentence" },
+      { "show": "Each kick changes its speed by an amount that depends on its angle.", "say": "Each kick changes its speed by an amount that depends on its angle.", "b": "sentence" },
+      { "show": "Between kicks, the angle drifts forward at that speed.", "say": "Between kicks, the angle drifts forward at that speed.", "b": "sentence" },
+      { "show": "Angle and momentum both wrap around, so every state is a point on a torus.", "say": "Angle and momentum both wrap around, so every state is a point on a torus.", "b": "sentence" },
+      { "show": "Some starting points circle forever on smooth curves: islands of stability.", "say": "Some starting points circle forever on smooth curves. These are islands of stability.", "b": "sentence" },
+      { "show": "Everywhere else is a chaotic sea.", "say": "Everywhere else is a chaotic sea.", "b": "sentence" },
+      { "show": "Undo the drift, then undo the kick, and you are back where you started.", "say": "Undo the drift, then undo the kick, and you are back where you started.", "b": "sentence" }
+    ]},
+    { "id": "echo", "pad_before": 0.3, "pad_after": 1.0, "lines": [
+      { "show": "A floating-point number carries about sixteen digits.", "say": "A floating-point number carries about sixteen digits.", "b": "sentence" },
+      { "show": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.", "say": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.", "b": "sentence" },
+      { "show": "Run fifty steps forward and fifty back, and the first pixels miss home.", "say": "Run fifty steps forward and fifty back, and the first pixels miss home.", "b": "sentence" },
+      { "show": "After a hundred, only the islands come back.", "say": "After a hundred, only the islands come back.", "b": "sentence" },
+      { "show": "The picture that returns is a map of where the motion is chaotic.", "say": "The picture that returns is a map of where the motion is chaotic.", "b": "sentence" },
+      { "show": "This is Loschmidt's echo: the laws run both ways, but rounding errors do not.", "say": "This is Losh-mitt's echo. The laws run both ways, but rounding errors do not.", "b": "paragraph" }
+    ]},
+    { "id": "lattice", "pad_before": 0.3, "pad_after": 1.0, "lines": [
+      { "show": "Now put the world on a grid of 256 by 256 cells.", "say": "Now put the world on a grid of two hundred fifty-six by two hundred fifty-six cells.", "b": "sentence" },
+      { "show": "Round each kick to a whole number of cells, and keep everything else exact.", "say": "Round each kick to a whole number of cells, and keep everything else exact.", "b": "sentence" },
+      { "show": "Then a kick slides each column up by a whole number of cells.", "say": "Then a kick slides each column up by a whole number of cells.", "b": "sentence" },
+      { "show": "A drift slides each row sideways by a whole number of cells.", "say": "A drift slides each row sideways by a whole number of cells.", "b": "sentence" },
+      { "show": "Sliding rows and columns can't make two cells collide, or leave a hole.", "say": "Sliding rows and columns can't make two cells collide, or leave a hole.", "b": "sentence" },
+      { "show": "So each step just reshuffles the 65,536 cells.", "say": "So each step just reshuffles the sixty-five thousand, five hundred thirty-six cells.", "b": "sentence" },
+      { "show": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.", "say": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.", "b": "paragraph" }
+    ]},
+    { "id": "proof", "pad_before": 0.3, "pad_after": 1.0, "lines": [
+      { "show": "Here is the machine code: eleven ARM instructions forward, twelve back.", "say": "Here is the machine code. Eleven arm instructions forward, twelve back.", "b": "sentence" },
+      { "show": "Each point is two bytes, and the kicks are a table of 256 bytes.", "say": "Each point is two bytes, and the kicks are a table of two hundred fifty-six bytes.", "b": "sentence" },
+      { "show": "Byte arithmetic wraps around at 256, which is exactly the torus.", "say": "Byte arithmetic wraps around at two hundred fifty-six, which is exactly the torus.", "b": "sentence" },
+      { "show": "In the HOL Light theorem prover, we proved that these exact bytes compute this map,", "say": "In the H-O-L Light theorem prover, we proved that these exact bytes compute this map,", "b": "clause" },
+      { "show": "for every input, every kick table, and any number of points.", "say": "for every input, every kick table, and any number of points.", "b": "sentence" },
+      { "show": "We also proved that the second routine undoes the first.", "say": "We also proved that the second routine undoes the first.", "b": "sentence" },
+      { "show": "The proof runs on a formal model of the ARM processor from the s2n-bignum project.", "say": "The proof runs on a formal model of the arm processor from the s-two-n bignum project.", "b": "sentence" },
+      { "show": "It covers the machine code, not the loop that calls it or the pixels you see.", "say": "It covers the machine code, not the loop that calls it or the pixels you see.", "b": "paragraph" }
+    ]},
+    { "id": "close", "pad_before": 0.3, "pad_after": 1.0, "lines": [
+      { "show": "Last time, being symplectic meant a ball could not be squeezed.", "say": "Last time, being symplectic meant a ball could not be squeezed.", "b": "sentence" },
+      { "show": "In two dimensions, it just means keeping area.", "say": "In two dimensions, it just means keeping area.", "b": "sentence" },
+      { "show": "On a grid, keeping area means never losing a single pixel.", "say": "On a grid, keeping area means never losing a single pixel.", "b": "sentence" },
+      { "show": "Run it back, and the camel comes home.", "say": "Run it back, and the camel comes home.", "b": "paragraph" }
+    ]},
+    { "id": "outro", "pad_before": 0.3, "pad_after": 3.0, "lines": [
+      { "show": "The interactive version and the proof are linked below.", "say": "The interactive version and the proof are linked below.", "b": "sentence" }
+    ]}
+  ]
+}

@@ -3,3 +3,9 @@ runs/
 build/*
 !build/lattice_echo.o
 proto/*.png
+video/node_modules/
+video/clips/
+video/*.wav
+video/*.mp4
+video/*.log
+video/stills/
