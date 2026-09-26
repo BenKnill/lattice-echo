@@ -12,3 +12,7 @@ video/stills/
 video/q*.png
 video/qcheck.jpg
 proto/page.jpg
+proto/lab_*.jpg
+proto/vse_chart.jpg
+proto/gao_app2.png
+proto/rot*_8cycles.png

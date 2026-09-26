@@ -1,0 +1,13 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless:'new', args:['--hide-scrollbars'] });
+const p = await b.newPage(); await p.setViewport({width:400,height:900,deviceScaleFactor:2});
+p.on('pageerror', e => console.log('[pageerror]', e.message));
+await p.goto('file:///Users/boxer/ben-advice/lattice-echo/docs/lab/index.html', {waitUntil:'networkidle0'});
+await p.waitForFunction(() => document.getElementById('phase').textContent.startsWith('after 10'), {timeout: 120000});
+const w = await p.evaluate(() => document.documentElement.scrollWidth); console.log('scrollWidth', w);
+await p.screenshot({path:'/Users/boxer/ben-advice/lattice-echo/proto/lab_mobile.jpg', type:'jpeg', quality:70, fullPage:true});
+const p2 = await b.newPage(); await p2.setViewport({width:1280,height:1700});
+await p2.goto('file:///Users/boxer/ben-advice/lattice-echo/docs/lab/index.html', {waitUntil:'networkidle0'});
+await p2.waitForFunction(() => document.getElementById('phase').textContent.startsWith('after 10'), {timeout: 120000});
+await p2.screenshot({path:'/Users/boxer/ben-advice/lattice-echo/proto/lab_end2.jpg', type:'jpeg', quality:80, clip:{x:0,y:960,width:1280,height:700}});
+await b.close();

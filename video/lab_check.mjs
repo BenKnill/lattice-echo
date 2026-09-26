@@ -1,0 +1,17 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless:'new', args:['--hide-scrollbars'] });
+const p = await b.newPage(); await p.setViewport({width:1280,height:1700});
+p.on('pageerror', e => console.log('[pageerror]', e.message)); p.on('console', m => console.log('[page]', m.text()));
+await p.goto('file:///Users/boxer/ben-advice/lattice-echo/docs/lab/index.html', {waitUntil:'networkidle0'});
+const phase = () => p.$eval('#phase', e => e.textContent);
+await p.waitForFunction(() => document.getElementById('phase').textContent.startsWith('cycle 5 of 10 · undoing'), {timeout: 120000});
+await p.screenshot({path:'/Users/boxer/ben-advice/lattice-echo/proto/lab_mid.jpg', type:'jpeg', quality:80, fullPage:true});
+await p.waitForFunction(() => document.getElementById('phase').textContent.startsWith('after 10'), {timeout: 120000});
+console.log('chaos:', await p.$eval('#chaos-sF', e => e.textContent), '|', await p.$eval('#chaos-sL', e => e.textContent));
+console.log('rot:', await p.$eval('#rot-sF', e => e.textContent), '|', await p.$eval('#rot-sL', e => e.textContent));
+console.log('vse:', await p.$eval('#vse-t', e => e.textContent), '|', await p.$eval('#vse-r', e => e.textContent));
+console.log('pat:', await p.$eval('#pat-c', e => e.textContent), '|', await p.$eval('#pat-e', e => e.textContent));
+await p.screenshot({path:'/Users/boxer/ben-advice/lattice-echo/proto/lab_end.jpg', type:'jpeg', quality:80, fullPage:true});
+await p.waitForFunction(() => document.getElementById('phase').textContent.startsWith('cycle 1 of 10'), {timeout: 30000});
+console.log('looped back to', await phase());
+await b.close();

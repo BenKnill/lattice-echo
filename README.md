@@ -10,6 +10,11 @@ correct in HOL Light.
 
 - Interactive page: https://benknill.github.io/lattice-echo/
 - Episode 1: [the symplectic camel](https://benknill.github.io/symplectic-camel/)
+- Lab: [Do, Undo, Repeat](https://benknill.github.io/lattice-echo/lab/). Four programs undone ten times in a row:
+  chaos, a 30° photo rotation, the 1982 Vancouver Stock Exchange index, and the 1991 Patriot clock.
+  The exact rotation is three whole-cell shears built from the verified routines
+  (`shear_p(T)` = `lattice_fwd(T)` then `lattice_bwd(0)`); `node kernel/check_rotate.mjs` checks the
+  JS version against them shear by shear.
 
 ## What is proven
 

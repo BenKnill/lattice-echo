@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Do, Undo, Repeat</title>
+<meta name="description" content="Four programs run forward and undone ten times in a row: chaos, a photo rotation, the 1982 Vancouver Stock Exchange index, and the 1991 Patriot missile clock. Rounded arithmetic drifts; exact arithmetic comes back every time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0A0D14; --panel: #10151F; --panel-2: #141A26; --line: #1F2736; --line-2: #2C3649;
+    --text: #DCE2EC; --muted: #8A95AA; --faint: #5A6479;
+    --cool: #4FD1C5; --lav: #A99CFF; --amber: #FFB547; --glass: #6FA8FF; --good: #5FD39A; --bad: #FF7A6B;
+    --serif: "STIX Two Text", "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.5; padding-inline: 16px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 24px 56px; display: flex; flex-direction: column; gap: 18px; }
+  header { display: flex; flex-direction: column; gap: 6px; }
+  .crumb { font-size: 13px; color: var(--faint); }
+  .crumb a { color: var(--muted); }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 42px); margin: 0; }
+  .lede { font-family: var(--serif); font-size: 19px; color: var(--muted); margin: 0; max-width: 70ch; }
+
+  .bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px;
+    padding: 10px 14px; background: rgba(16,21,31,.94); border: 1px solid var(--line); border-radius: 8px; backdrop-filter: blur(6px); }
+  button { font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 6px; padding: 7px 13px; cursor: pointer; }
+  button:hover { border-color: var(--faint); }
+  button:focus-visible { outline: 2px solid var(--glass); outline-offset: 2px; }
+  button[aria-pressed="true"] { border-color: var(--amber); color: var(--amber); }
+  .cycles { display: flex; gap: 4px; align-items: center; }
+  .seg { width: 26px; height: 8px; border-radius: 4px; background: var(--line-2); overflow: hidden; }
+  .seg i { display: block; height: 100%; width: 0; background: var(--glass); }
+  .phase { font-family: var(--mono); font-size: 14px; color: var(--muted); min-width: 21ch; font-variant-numeric: tabular-nums; }
+
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px 16px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+  .card h2 { font-family: var(--serif); font-weight: 600; font-size: 23px; margin: 0; }
+  .card p { margin: 0; color: #B9C2D2; font-size: 14.5px; }
+  .lanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .lane { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+  .lane-head { display: flex; flex-direction: column; gap: 0; min-height: 2.9em; }
+  .lane-title { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .stat { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; color: var(--muted); }
+  .stat.ok { color: var(--good); } .stat.no { color: var(--bad); }
+  canvas.view { width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 4px; background: #0E131E; display: block; max-width: 100%; }
+  .strip { display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 3px; }
+  .strip canvas { width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 2px; background: #0E131E; outline: 1px solid var(--line); display: block; }
+  .strip canvas.now { outline: 2px solid var(--glass); }
+  .strip-label { display: flex; justify-content: space-between; font-size: 11.5px; color: var(--faint); font-family: var(--mono); }
+  canvas.chart { width: 100%; aspect-ratio: 16 / 9; display: block; border-radius: 4px; background: #0E131E; max-width: 100%; }
+  .readouts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; font-size: 13.5px; }
+  .readouts div { display: flex; flex-direction: column; }
+  .readouts span { color: var(--faint); font-size: 12px; letter-spacing: .06em; text-transform: uppercase; }
+  .readouts b { font-family: var(--mono); font-weight: 500; font-size: 17px; font-variant-numeric: tabular-nums; }
+  .bad { color: var(--bad); } .good { color: var(--good); }
+  table { width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  th { text-align: right; font-family: var(--sans); font-weight: 500; font-size: 11.5px; color: var(--faint); letter-spacing: .05em; text-transform: uppercase; padding: 3px 6px; border-bottom: 1px solid var(--line); }
+  td { text-align: right; padding: 2px 6px; color: var(--muted); border-bottom: 1px solid #161c28; }
+  td.pending { color: #2C3649; }
+  .tablewrap { overflow-x: auto; }
+  .src { font-size: 12.5px; color: var(--faint); }
+  .src a { color: var(--muted); }
+  footer { color: var(--faint); font-size: 13px; display: flex; flex-direction: column; gap: 6px; }
+  footer a { color: var(--glass); }
+  @media (max-width: 980px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 560px) { .bar { position: static; } .strip-label span:nth-child(2) { display: none; } }
+  @media (max-width: 440px) { .lanes { gap: 8px; } .phase { min-width: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="crumb"><a href="../">Running Chaos Backwards</a> · lab</div>
+    <h1>Do, Undo, Repeat</h1>
+    <p class="lede">Four programs, each run and then undone, ten times in a row. On the left of each card is the usual arithmetic, which rounds a little at every step. On the right is a version that cannot drift. The thumbnails record where each cycle came back to.</p>
+  </header>
+
+  <div class="bar" role="group" aria-label="Playback">
+    <button id="play" aria-pressed="false">Pause</button>
+    <button id="reset">Reset to original</button>
+    <button id="compare">Hold to compare with original</button>
+    <div class="cycles" id="segs" aria-hidden="true"></div>
+    <span class="phase" id="phase" aria-live="off">cycle 1 of 10</span>
+  </div>
+
+  <div class="grid">
+    <section class="card" id="card-chaos">
+      <div class="eyebrow">Chaos · deeper each cycle</div>
+      <h2>Scramble, then unscramble</h2>
+      <p>The kicked rotor scrambles the picture and runs back, 12 steps each way in cycle 1, 24 in cycle 2, up to 120. Floating point starts losing the chaotic sea at about 50 steps. The lattice moves whole cells and runs the verified machine code's arithmetic.</p>
+      <div class="lanes">
+        <div class="lane"><div class="lane-head"><span class="lane-title">Floating point</span><span class="stat" id="chaos-sF"></span></div><canvas class="view" id="chaos-F" width="256" height="256"></canvas></div>
+        <div class="lane"><div class="lane-head"><span class="lane-title">Exact lattice</span><span class="stat" id="chaos-sL"></span></div><canvas class="view" id="chaos-L" width="256" height="256"></canvas></div>
+      </div>
+      <div class="strip" id="chaos-rF"></div><div class="strip" id="chaos-rL"></div>
+      <div class="strip-label"><span>cycle 1 · 12 steps</span><span>record of each return</span><span>cycle 10 · 120 steps</span></div>
+    </section>
+
+    <section class="card" id="card-rot">
+      <div class="eyebrow">Geometry · you would not expect this one</div>
+      <h2>Rotate 30°, rotate back</h2>
+      <p>A photo editor rotates by resampling each pixel from its neighbours. Undoing it resamples again, so every cycle blurs the picture, and the corners that left the canvas never return. The exact version is three shears of whole cells, the same arithmetic the verified code does.</p>
+      <div class="lanes">
+        <div class="lane"><div class="lane-head"><span class="lane-title">Bilinear resampling</span><span class="stat" id="rot-sF"></span></div><canvas class="view" id="rot-F" width="256" height="256"></canvas></div>
+        <div class="lane"><div class="lane-head"><span class="lane-title">Three exact shears</span><span class="stat" id="rot-sL"></span></div><canvas class="view" id="rot-L" width="256" height="256"></canvas></div>
+      </div>
+      <div class="strip" id="rot-rF"></div><div class="strip" id="rot-rL"></div>
+      <div class="strip-label"><span>cycle 1</span><span>record of each return</span><span>cycle 10</span></div>
+    </section>
+
+    <section class="card" id="card-vse">
+      <div class="eyebrow">Real case · Vancouver, 1982–83</div>
+      <h2>The index that lost half its value</h2>
+      <p>The Vancouver Stock Exchange started a new index at 1,000 in January 1982 and updated it about 3,000 times a day. Each update truncated it to three decimals, which always rounds down. After 22 months it read 524.811; recomputed properly, it was 1,098.892. Each cycle here is 2.2 months of a miniature market calibrated to those two numbers.</p>
+      <canvas class="chart" id="vse-chart" width="1040" height="585" aria-label="Index value over 22 months, truncated and rounded"></canvas>
+      <div class="readouts">
+        <div><span>Truncated each update</span><b class="bad" id="vse-t">1000.000</b></div>
+        <div><span>Rounded to nearest</span><b class="good" id="vse-r">1000.000</b></div>
+      </div>
+      <div class="src">Recorded values from the <i>Wall Street Journal</i> (8 Nov 1983) and <i>Toronto Star</i> (29 Nov 1983), via <a href="https://en.wikipedia.org/wiki/Vancouver_Stock_Exchange">Wikipedia</a>. Miniature: 2,280 random updates per trading day for 478 trading days.</div>
+    </section>
+
+    <section class="card" id="card-pat">
+      <div class="eyebrow">Real case · Dhahran, 25 February 1991</div>
+      <h2>The clock that drifted a third of a second</h2>
+      <p>A Patriot battery counted time in tenths of a second, then multiplied by 1/10 held in a 24-bit register. 1/10 has no exact binary form, so each tick lost 0.000000095 s. After 100 hours of continuous running the tracking gate had moved 687 m. It did not track the incoming Scud, and 28 soldiers were killed. Each cycle here is 10 hours of uptime.</p>
+      <canvas class="chart" id="pat-view" width="1040" height="400" aria-label="Range gate positions relative to the incoming missile"></canvas>
+      <div class="readouts">
+        <div><span>Clock, integer ticks ÷ 10</span><b class="good" id="pat-e">0.0000 s</b></div>
+        <div><span>Clock, ticks × chopped 1/10</span><b class="bad" id="pat-c">0.0000 s</b></div>
+      </div>
+      <div class="tablewrap"><table id="pat-table"><thead><tr><th>Hours</th><th>Time error (s)</th><th>Gate shift (m)</th><th>Target</th></tr></thead><tbody></tbody></table></div>
+      <div class="src">Arithmetic and gate shifts reproduce GAO report <a href="https://www.gao.gov/products/imtec-92-26">IMTEC-92-26</a> (1992), Appendix II. The gate's width is drawn schematically: GAO notes the target fell outside it after about 20 hours.</div>
+    </section>
+  </div>
+
+  <footer>
+    <span>The chaos and rotation cards run a JavaScript port whose output was checked, step by step and shear by shear, against the HOL Light-verified AArch64 routines in <a href="https://github.com/BenKnill/lattice-echo">BenKnill/lattice-echo</a>. The Vancouver and Patriot cards are plain arithmetic reproductions, not verified code.</span>
+    <span>Built with Claude (Anthropic's Claude Opus 5.5) in Claude Code.</span>
+  </footer>
+</div>
+
+<script src="../lattice.js"></script>
+<script src="../camel.js"></script>
+<script src="models.js"></script>
+<script>
+(() => {
+  const L = window.Lattice, M = window.LabModels, N = L.N, $ = id => document.getElementById(id);
+  const CYCLES = 10, D = { do: 1.7, undo: 1.7, gap: 0.55, hold: 3.2, reset: 1.3 };
+  const ease = x => (x = Math.min(1, Math.max(0, x)), x * x * (3 - 2 * x));
+  let colors = null, camelRGB = null;
+  let compare = false;
+
+  // ---------- shared painting ----------
+  const signed = v => (v >= 128 ? v - 256 : v);
+  function paintPts(ctx, img, pts, mode, T, f) {
+    const d = img.data;
+    for (let o = 0; o < d.length; o += 4) { d[o] = 14; d[o + 1] = 19; d[o + 2] = 30; d[o + 3] = 255; }
+    for (let i = 0; i < N * N; i++) {
+      let x = pts[2 * i], p = pts[2 * i + 1];
+      if (mode === "x") x = Math.round(x + f * signed(T[p]));
+      else if (mode === "p") p = Math.round(p + f * signed(T[x]));
+      else if (mode === "kick") p = Math.round(p + f * signed(T[x]));
+      const q = 4 * ((((N / 2 - 1 - p) % N + N) % N) * N + ((x % N) + N) % N);
+      d[q] = colors[4 * i]; d[q + 1] = colors[4 * i + 1]; d[q + 2] = colors[4 * i + 2];
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function paintFloatPts(ctx, img, xs, ys) {
+    const d = img.data;
+    for (let o = 0; o < d.length; o += 4) { d[o] = 14; d[o + 1] = 19; d[o + 2] = 30; d[o + 3] = 255; }
+    for (let i = 0; i < N * N; i++) {
+      const x = Math.floor(xs[i] * N) & 255, p = Math.floor(ys[i] * N) & 255, q = 4 * ((((N / 2 - 1 - p) % N + N) % N) * N + x);
+      d[q] = colors[4 * i]; d[q + 1] = colors[4 * i + 1]; d[q + 2] = colors[4 * i + 2];
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function makeStrip(id) {
+    const el = $(id), cs = [];
+    for (let k = 0; k < CYCLES; k++) { const c = document.createElement("canvas"); c.width = c.height = 64; el.appendChild(c); cs.push(c); }
+    return cs;
+  }
+  function snap(strip, k, src) { const g = strip[k].getContext("2d"); g.imageSmoothingEnabled = true; g.drawImage(src, 0, 0, 64, 64); }
+  function clearStrip(strip) { for (const c of strip) c.getContext("2d").clearRect(0, 0, 64, 64); }
+  function markNow(strips, k) { for (const s of strips) s.forEach((c, i) => c.classList.toggle("now", i === k)); }
+  const origCanvas = document.createElement("canvas"); origCanvas.width = origCanvas.height = N;
+  function wipe(ctx, f) { if (f > 0) { ctx.save(); ctx.beginPath(); ctx.rect(0, 0, N * f, N); ctx.clip(); ctx.drawImage(origCanvas, 0, 0); ctx.restore(); ctx.fillStyle = "#6FA8FF"; ctx.fillRect(N * f - 1, 0, 2, N); } }
+
+  // ---------- card 1: chaos ----------
+  const chaos = (() => {
+    const cF = $("chaos-F").getContext("2d"), cL = $("chaos-L").getContext("2d");
+    const iF = cF.createImageData(N, N), iL = cL.createImageData(N, N);
+    const rF = makeStrip("chaos-rF"), rL = makeStrip("chaos-rL"), kick = L.kickTable(2.0), P0 = L.initialPoints();
+    let pts, xs, ys, done = 0, last = { F: "", L: "" };
+    function reset() {
+      pts = L.initialPoints(); xs = new Float64Array(N * N); ys = new Float64Array(N * N);
+      for (let i = 0; i < N * N; i++) { xs[i] = (P0[2 * i] + 0.5) / N; ys[i] = (P0[2 * i + 1] + 0.5) / N; }
+      done = 0; clearStrip(rF); clearStrip(rL); last = { F: "", L: "" };
+    }
+    function home() { let f = 0, l = 0; for (let i = 0; i < N * N; i++) { if ((Math.floor(xs[i] * N) & 255) === P0[2 * i] && (Math.floor(ys[i] * N) & 255) === P0[2 * i + 1]) f++; if (pts[2 * i] === P0[2 * i] && pts[2 * i + 1] === P0[2 * i + 1]) l++; } return [f / (N * N), l / (N * N)]; }
+    function update(phase, cycle, f) {
+      const k = 12 * cycle;
+      if (phase === "do") { const target = Math.round(ease(f) * k); while (done < target) { L.fwd(pts, kick); L.floatFwd(xs, ys, 2.0); done++; } last = { F: `scrambling · ${done}/${k}`, L: `scrambling · ${done}/${k}` }; }
+      else if (phase === "undo") { const target = Math.round(ease(f) * k); while (done > k - target) { L.bwd(pts, kick); L.floatBwd(xs, ys, 2.0); done--; } last = { F: `unscrambling · ${done}`, L: `unscrambling · ${done}` }; }
+    }
+    function record(cycle) {
+      const [f, l] = home();
+      last = { F: `${(100 * f).toFixed(1)}% home`, L: `${(100 * l).toFixed(1)}% home` };
+      draw(); snap(rF, cycle - 1, $("chaos-F")); snap(rL, cycle - 1, $("chaos-L"));
+      return f;
+    }
+    function draw(wipeF = 0) {
+      if (compare) { cF.drawImage(origCanvas, 0, 0); cL.drawImage(origCanvas, 0, 0); }
+      else { paintFloatPts(cF, iF, xs, ys); paintPts(cL, iL, pts); wipe(cF, wipeF); wipe(cL, wipeF); }
+      $("chaos-sF").textContent = last.F; $("chaos-sL").textContent = last.L;
+      $("chaos-sF").className = "stat" + (last.F.includes("home") ? (last.F.startsWith("100.0") ? " ok" : " no") : "");
+      $("chaos-sL").className = "stat" + (last.L.includes("home") ? " ok" : "");
+    }
+    return { reset, update, record, draw, strips: [rF, rL] };
+  })();
+
+  // ---------- card 2: rotation ----------
+  const rot = (() => {
+    const cF = $("rot-F").getContext("2d"), cL = $("rot-L").getContext("2d");
+    const iL = cL.createImageData(N, N), iF = cF.createImageData(N, N);
+    const rF = makeStrip("rot-rF"), rL = makeStrip("rot-rL"), R = L.rotationTables(30), TH = 30 * Math.PI / 180;
+    const stage = document.createElement("canvas"); stage.width = stage.height = N; const sg = stage.getContext("2d"), si = sg.createImageData(N, N);
+    let img, pts, shearsDone = 0, floatDone = false, last = { F: "", L: "" };
+    const BG = [14, 19, 30];
+    function reset() { img = new Float32Array(camelRGB); pts = L.initialPoints(); shearsDone = 0; floatDone = false; clearStrip(rF); clearStrip(rL); last = { F: "", L: "" }; }
+    function resample(src, th) {                         // rotate counterclockwise by th, bilinear, fixed canvas
+      const out = new Float32Array(N * N * 3), c = Math.cos(th), s = Math.sin(th);
+      for (let yo = 0; yo < N; yo++) for (let xo = 0; xo < N; xo++) {
+        const dx = xo - 127.5, dy = 127.5 - yo, xs = 127.5 + c * dx + s * dy, ys = 127.5 - (-s * dx + c * dy);
+        const x0 = Math.floor(xs), y0 = Math.floor(ys), fx = xs - x0, fy = ys - y0, o = 3 * (yo * N + xo);
+        for (let ch = 0; ch < 3; ch++) {
+          const at = (y, x) => (x < 0 || y < 0 || x >= N || y >= N) ? BG[ch] : src[3 * (y * N + x) + ch];
+          out[o + ch] = (1 - fx) * (1 - fy) * at(y0, x0) + fx * (1 - fy) * at(y0, x0 + 1) + (1 - fx) * fy * at(y0 + 1, x0) + fx * fy * at(y0 + 1, x0 + 1);
+        }
+      }
+      return out;
+    }
+    function toStage() { const d = si.data; for (let i = 0; i < N * N; i++) { d[4 * i] = img[3 * i]; d[4 * i + 1] = img[3 * i + 1]; d[4 * i + 2] = img[3 * i + 2]; d[4 * i + 3] = 255; } sg.putImageData(si, 0, 0); }
+    const seqDo = [["x", R.A], ["p", R.B], ["x", R.A]], seqUndo = [["x", R.nA], ["p", R.nB], ["x", R.nA]];
+    const apply = ([m, T]) => (m === "x" ? L.shearX : L.shearP)(pts, T);
+    let floatAngle = 0, shearMode = null, shearT = null, shearF = 0;
+    function update(phase, cycle, f) {
+      if (phase !== "do" && phase !== "undo") { shearMode = null; floatAngle = 0; return; }
+      const seq = phase === "do" ? seqDo : seqUndo, g = ease(f), s = g * 3, idx = Math.min(2, Math.floor(s));
+      while (shearsDone < idx) apply(seq[shearsDone++]);
+      if (g >= 1) { while (shearsDone < 3) apply(seq[shearsDone++]); shearMode = null; } else { [shearMode, shearT] = seq[idx]; shearF = s - idx; }
+      floatAngle = (phase === "do" ? 1 : -1) * g * TH;
+      if (g >= 1 && !floatDone) { img = resample(img, phase === "do" ? TH : -TH); floatDone = true; floatAngle = 0; }
+      last = { F: phase === "do" ? "rotating" : "rotating back", L: phase === "do" ? "shearing" : "unshearing" };
+    }
+    function phaseStart() { shearsDone = 0; floatDone = false; }
+    function error() { let e = 0, n = 0; for (let i = 0; i < N * N * 3; i++) { e += Math.abs(img[i] - camelRGB[i]); n++; } return e / n; }
+    function record(cycle) {
+      let l = 0; const P0 = L.initialPoints(); for (let i = 0; i < pts.length; i++) if (pts[i] !== P0[i]) { l++; break; }
+      last = { F: `error ${error().toFixed(1)} / 255`, L: l ? "moved" : "every cell home" };
+      draw(); snap(rF, cycle - 1, $("rot-F")); snap(rL, cycle - 1, $("rot-L"));
+    }
+    function draw(wipeF = 0) {
+      if (compare) { cF.drawImage(origCanvas, 0, 0); cL.drawImage(origCanvas, 0, 0); }
+      else {
+        toStage(); cF.fillStyle = "#0E131E"; cF.fillRect(0, 0, N, N);
+        cF.save(); cF.translate(128, 128); cF.rotate(-floatAngle); cF.drawImage(stage, -128, -128); cF.restore();
+        paintPts(cL, iL, pts, shearMode, shearT, shearF);
+        wipe(cF, wipeF); wipe(cL, wipeF);
+      }
+      $("rot-sF").textContent = last.F; $("rot-sL").textContent = last.L;
+      $("rot-sF").className = "stat" + (last.F.startsWith("error") ? " no" : "");
+      $("rot-sL").className = "stat" + (last.L === "every cell home" ? " ok" : "");
+    }
+    return { reset, update, record, draw, phaseStart, strips: [rF, rL] };
+  })();
+
+  // ---------- card 3: Vancouver ----------
+  const vse = (() => {
+    const cv = $("vse-chart"), g = cv.getContext("2d"), W = cv.width, H = cv.height;
+    const DAYS = 478, UPD = 2280, model = M.vancouver(UPD, DAYS, 1982);
+    let s, dailyT, dailyR;
+    function reset() { s = M.vancouverStart(); dailyT = [1000]; dailyR = [1000]; }
+    function advanceTo(frac) {
+      const target = Math.round(frac * model.n);
+      while (s.i < target) {
+        const nextDay = Math.min(target, (Math.floor(s.i / UPD) + 1) * UPD);
+        M.vancouverStep(s, model, nextDay - s.i);
+        if (s.i % UPD === 0) { dailyT.push(s.trunc / 1000); dailyR.push(s.round / 1000); }
+      }
+    }
+    function update(phase, cycle, f) {
+      if (phase === "do") advanceTo((cycle - 1 + f / 2) / CYCLES);
+      else if (phase === "undo") advanceTo((cycle - 1 + 0.5 + f / 2) / CYCLES);
+    }
+    function record() {}
+    const X = d => 70 + d / DAYS * (W - 150), Y = v => 30 + (1 - v / 1200) * (H - 90);
+    function draw() {
+      g.clearRect(0, 0, W, H);
+      g.font = '22px "IBM Plex Mono", monospace'; g.fillStyle = "#5A6479"; g.strokeStyle = "rgba(44,54,73,.8)"; g.lineWidth = 1;
+      for (let v = 0; v <= 1200; v += 200) { g.beginPath(); g.moveTo(70, Y(v)); g.lineTo(W - 30, Y(v)); g.stroke(); g.textAlign = "right"; g.fillText(String(v), 60, Y(v) + 7); }
+      g.textAlign = "center";
+      [["Jan 1982", 0], ["Jul 1982", 125], ["Jan 1983", 252], ["Jul 1983", 376], ["Nov 1983", 478]].forEach(([t, d]) => g.fillText(t, X(d), H - 22));
+      const line = (arr, col) => { g.strokeStyle = col; g.lineWidth = 4; g.beginPath(); arr.forEach((v, d) => d ? g.lineTo(X(d), Y(v)) : g.moveTo(X(d), Y(v))); g.stroke(); };
+      line(dailyR, "#5FD39A"); line(dailyT, "#FF7A6B");
+      const d = dailyT.length - 1;
+      g.fillStyle = "#fff"; [dailyT[d], dailyR[d]].forEach(v => { g.beginPath(); g.arc(X(d), Y(v), 6, 0, 2 * Math.PI); g.fill(); });
+      if (s.i >= model.n) {
+        g.font = '22px "IBM Plex Sans", sans-serif'; g.textAlign = "right";
+        g.textAlign = "left"; g.font = '23px "IBM Plex Sans", sans-serif';
+        g.fillStyle = "#5FD39A"; g.fillText("Real index, recomputed in Nov 1983: 1,098.892", X(12), Y(290));
+        g.fillStyle = "#FF7A6B"; g.fillText("Real index as published, 25 Nov 1983: 524.811", X(12), Y(190));
+      }
+      $("vse-t").textContent = (s.trunc / 1000).toFixed(3); $("vse-r").textContent = (s.round / 1000).toFixed(3);
+    }
+    return { reset, update, record, draw };
+  })();
+
+  // ---------- card 4: Patriot ----------
+  const pat = (() => {
+    const cv = $("pat-view"), g = cv.getContext("2d"), W = cv.width, H = cv.height, P = M.patriot, GATE = 130;
+    const tbody = $("pat-table").querySelector("tbody");
+    let hours = 0;
+    function reset() {
+      hours = 0; tbody.innerHTML = "";
+      for (let k = 1; k <= CYCLES; k++) tbody.insertAdjacentHTML("beforeend", `<tr id="pat-row${k}"><td>${k * 10}</td><td class="pending">·</td><td class="pending">·</td><td class="pending">·</td></tr>`);
+    }
+    function update(phase, cycle, f) {
+      if (phase === "do") hours = 10 * (cycle - 1 + f / 2); else if (phase === "undo") hours = 10 * (cycle - 1 + 0.5 + f / 2);
+    }
+    const errAt = h => { const t = Math.round(h * 36000); return P.exactTime(t) - P.choppedTime(t); };
+    function record(cycle) {
+      const e = errAt(10 * cycle), sh = Math.round(e * P.gateShiftPerSecond), out = sh > GATE;
+      const row = $("pat-row" + cycle);
+      row.innerHTML = `<td>${cycle * 10}</td><td>${e.toFixed(4)}</td><td>${sh}</td><td class="${out ? "bad" : "good"}">${out ? "outside gate" : "inside"}</td>`;
+    }
+    function draw() {
+      const t = Math.round(hours * 36000), e = P.exactTime(t) - P.choppedTime(t), sh = e * P.gateShiftPerSecond;
+      g.clearRect(0, 0, W, H);
+      const X = m => 90 + (m + 200) / 1100 * (W - 140), cy = 190;
+      g.strokeStyle = "rgba(44,54,73,.9)"; g.lineWidth = 1; g.font = '20px "IBM Plex Mono", monospace'; g.fillStyle = "#5A6479"; g.textAlign = "center";
+      for (let m = -200; m <= 900; m += 100) { g.beginPath(); g.moveTo(X(m), 60); g.lineTo(X(m), 320); g.stroke(); if (m % 200 === 0) g.fillText(`${m} m`, X(m), 355); }
+      g.fillStyle = "rgba(95,211,154,.10)"; g.fillRect(X(-GATE), 90, X(GATE) - X(-GATE), 90);
+      g.strokeStyle = "#5FD39A"; g.lineWidth = 3; g.strokeRect(X(-GATE), 90, X(GATE) - X(-GATE), 90);
+      g.fillStyle = "rgba(255,122,107,.12)"; g.fillRect(X(sh - GATE), 200, X(GATE) - X(-GATE), 90);
+      g.strokeStyle = "#FF7A6B"; g.strokeRect(X(sh - GATE), 200, X(GATE) - X(-GATE), 90);
+      g.font = '19px "IBM Plex Sans", sans-serif'; g.textAlign = "left";
+      g.fillStyle = "#5FD39A"; g.fillText("gate from exact clock", X(-GATE) + 8, 116);
+      g.fillStyle = "#FF7A6B"; g.fillText("gate from chopped clock", X(sh - GATE) + 8, 226);
+      const out = sh > GATE;
+      g.strokeStyle = "#FFB547"; g.lineWidth = 2; g.setLineDash([6, 6]); g.beginPath(); g.moveTo(X(0), 70); g.lineTo(X(0), 310); g.stroke(); g.setLineDash([]);
+      g.fillStyle = "#FFB547"; g.beginPath(); g.moveTo(X(0) + 16, cy); g.lineTo(X(0) - 12, cy - 9); g.lineTo(X(0) - 12, cy + 9); g.closePath(); g.fill();
+      g.textAlign = "center"; g.fillText("incoming Scud", X(0), 50);
+      g.font = '22px "IBM Plex Mono", monospace'; g.textAlign = "right"; g.fillStyle = out ? "#FF7A6B" : "#8A95AA";
+      g.fillText(`${hours.toFixed(1)} h running · gate shift ${Math.round(sh)} m${out ? " · target outside" : ""}`, W - 30, 388);
+      $("pat-e").textContent = `${P.exactTime(t).toFixed(4)} s`; $("pat-c").textContent = `${P.choppedTime(t).toFixed(4)} s`;
+    }
+    return { reset, update, record, draw };
+  })();
+
+  const cards = [chaos, rot, vse, pat];
+
+  // ---------- sequencer ----------
+  const segs = [];
+  for (let k = 0; k < CYCLES; k++) { const s = document.createElement("div"); s.className = "seg"; s.innerHTML = "<i></i>"; $("segs").appendChild(s); segs.push(s.firstChild); }
+  const seq = { cycle: 1, phase: "do", t: 0, playing: true };
+  function resetAll() { for (const c of cards) c.reset(); seq.cycle = 1; seq.phase = "do"; seq.t = 0; rot.phaseStart(); segs.forEach(s => s.style.width = "0"); }
+  function next() {
+    const p = seq.phase;
+    if (p === "do") { seq.phase = "undo"; rot.phaseStart(); }
+    else if (p === "undo") { seq.phase = "gap"; for (const c of cards) c.record(seq.cycle); segs[seq.cycle - 1].style.width = "100%"; }
+    else if (p === "gap") { if (seq.cycle < CYCLES) { seq.cycle++; seq.phase = "do"; rot.phaseStart(); } else seq.phase = "hold"; }
+    else if (p === "hold") seq.phase = "reset";
+    else if (p === "reset") resetAll();
+    seq.t = 0;
+  }
+  function label() {
+    const c = seq.cycle, p = seq.phase;
+    if (p === "hold") return `after ${CYCLES} cycles`;
+    if (p === "reset") return "resetting to original";
+    return `cycle ${c} of ${CYCLES} · ${p === "do" ? "doing" : p === "undo" ? "undoing" : "recorded"}`;
+  }
+  let lastT = performance.now();
+  function frame(now) {
+    const dt = Math.min(0.1, (now - lastT) / 1000); lastT = now;
+    if (seq.playing && colors) {
+      seq.t += dt;
+      const dur = D[seq.phase], f = Math.min(1, seq.t / dur);
+      for (const c of cards) c.update(seq.phase, seq.cycle, f);
+      if (seq.phase === "do" || seq.phase === "undo") segs[seq.cycle - 1].style.width = `${(seq.phase === "do" ? f / 2 : 0.5 + f / 2) * 100}%`;
+      if (seq.t >= dur) next();
+    }
+    if (colors) {
+      const wf = seq.phase === "reset" ? ease(Math.min(1, seq.t / D.reset)) : 0;
+      chaos.draw(wf); rot.draw(wf); vse.draw(); pat.draw();
+      markNow([...chaos.strips, ...rot.strips], seq.phase === "hold" || seq.phase === "reset" ? -1 : seq.cycle - 1);
+      $("phase").textContent = label();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- controls ----------
+  const play = $("play");
+  const setPlaying = p => { seq.playing = p; play.textContent = p ? "Pause" : "Play"; play.setAttribute("aria-pressed", String(!p)); };
+  play.addEventListener("click", () => setPlaying(!seq.playing));
+  $("reset").addEventListener("click", () => resetAll());
+  const cmp = $("compare");
+  const on = e => { e.preventDefault(); compare = true; cmp.setAttribute("aria-pressed", "true"); };
+  const off = () => { compare = false; cmp.setAttribute("aria-pressed", "false"); };
+  cmp.addEventListener("pointerdown", on); cmp.addEventListener("pointerup", off); cmp.addEventListener("pointerleave", off); cmp.addEventListener("pointercancel", off);
+  cmp.addEventListener("keydown", e => { if (e.key === " " || e.key === "Enter") on(e); });
+  cmp.addEventListener("keyup", e => { if (e.key === " " || e.key === "Enter") off(); });
+  if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) setPlaying(false);
+
+  const im = new Image();
+  im.onload = () => {
+    const c = document.createElement("canvas"); c.width = c.height = N; const g = c.getContext("2d"); g.drawImage(im, 0, 0);
+    colors = g.getImageData(0, 0, N, N).data; camelRGB = new Float32Array(N * N * 3);
+    for (let i = 0; i < N * N; i++) { camelRGB[3 * i] = colors[4 * i]; camelRGB[3 * i + 1] = colors[4 * i + 1]; camelRGB[3 * i + 2] = colors[4 * i + 2]; }
+    origCanvas.getContext("2d").drawImage(im, 0, 0);
+    resetAll(); requestAnimationFrame(frame);
+  };
+  im.src = window.CAMEL_PNG;
+})();
+</script>
+</body>
+</html>
