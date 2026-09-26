@@ -64,5 +64,5 @@ for i, l in enumerate(lines):
     nxt = lines[i + 1]['start'] if i + 1 < len(lines) else l['end'] + 1
     until = nxt if nxt - l['end'] < 0.9 else l['end'] + 0.35
     srt.append(f'{i+1}\n{ts(l["start"] - 0.08)} --> {ts(until - 0.02)}\n{l["show"]}\n')
-(HERE / 'symplectic-camel.srt').write_text('\n'.join(srt))
+(HERE / 'running-chaos-backwards.srt').write_text('\n'.join(srt))
 print(f'duration {t:.1f}s, {len(lines)} lines, gain {gain:.1f} dB')

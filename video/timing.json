@@ -1,0 +1,811 @@
+{
+ "duration": 247.901,
+ "beats": {
+  "open": {
+   "start": 0.0,
+   "end": 37.53,
+   "lines": [
+    {
+     "index": 0,
+     "clip": "fc9ac804fa72",
+     "beat": "open",
+     "show": "This picture is about to be scrambled by chaos.",
+     "say": "This picture is about to be scrambled by chaos.",
+     "start": 1.46,
+     "end": 5.0
+    },
+    {
+     "index": 1,
+     "clip": "f8cbd76542d5",
+     "beat": "open",
+     "show": "Each step moves every pixel by a simple rule from physics.",
+     "say": "Each step moves every pixel by a simple rule from physics.",
+     "start": 5.71,
+     "end": 10.13
+    },
+    {
+     "index": 2,
+     "clip": "8346d2c99973",
+     "beat": "open",
+     "show": "After a hundred steps, it looks like noise.",
+     "say": "After a hundred steps, it looks like noise.",
+     "start": 10.84,
+     "end": 14.36
+    },
+    {
+     "index": 3,
+     "clip": "ccd0182d9a0e",
+     "beat": "open",
+     "show": "The rule can be run backwards exactly, at least on paper.",
+     "say": "The rule can be run backwards exactly, at least on paper.",
+     "start": 15.07,
+     "end": 19.53
+    },
+    {
+     "index": 4,
+     "clip": "db5d5440d233",
+     "beat": "open",
+     "show": "So let's run it backwards on a computer.",
+     "say": "So let's run it backwards on a computer.",
+     "start": 20.24,
+     "end": 23.45
+    },
+    {
+     "index": 5,
+     "clip": "6d4fc55508cb",
+     "beat": "open",
+     "show": "On the left, ordinary floating point. On the right, a version that lives on a grid.",
+     "say": "On the left, ordinary floating point. On the right, a version that lives on a grid.",
+     "start": 24.16,
+     "end": 30.46
+    },
+    {
+     "index": 6,
+     "clip": "e64d5b956baa",
+     "beat": "open",
+     "show": "Floating point brings back fragments. The grid brings back every pixel.",
+     "say": "Floating point brings back fragments. The grid brings back every pixel.",
+     "start": 31.17,
+     "end": 36.63
+    }
+   ]
+  },
+  "title": {
+   "start": 37.53,
+   "end": 40.67,
+   "lines": [
+    {
+     "index": 7,
+     "clip": "61b9920871a1",
+     "beat": "title",
+     "show": "Running chaos backwards.",
+     "say": "Running chaos backwards.",
+     "start": 37.79,
+     "end": 39.97
+    }
+   ]
+  },
+  "rotor": {
+   "start": 40.67,
+   "end": 85.81,
+   "lines": [
+    {
+     "index": 8,
+     "clip": "328bed9f9cca",
+     "beat": "rotor",
+     "show": "The rule is the kicked rotor, a standard model of chaos.",
+     "say": "The rule is the kicked rotor, a standard model of chaos.",
+     "start": 41.13,
+     "end": 45.69
+    },
+    {
+     "index": 9,
+     "clip": "24900cbab53b",
+     "beat": "rotor",
+     "show": "Picture a rod spinning freely, kicked at regular intervals.",
+     "say": "Picture a rod spinning freely, kicked at regular intervals.",
+     "start": 46.4,
+     "end": 50.93
+    },
+    {
+     "index": 10,
+     "clip": "7bf08e448e00",
+     "beat": "rotor",
+     "show": "Each kick changes its speed by an amount that depends on its angle.",
+     "say": "Each kick changes its speed by an amount that depends on its angle.",
+     "start": 51.64,
+     "end": 56.88
+    },
+    {
+     "index": 11,
+     "clip": "403685c75bd4",
+     "beat": "rotor",
+     "show": "Between kicks, the angle drifts forward at that speed.",
+     "say": "Between kicks, the angle drifts forward at that speed.",
+     "start": 57.59,
+     "end": 61.58
+    },
+    {
+     "index": 12,
+     "clip": "e17f107c9f0d",
+     "beat": "rotor",
+     "show": "Angle and momentum both wrap around, so every state is a point on a torus.",
+     "say": "Angle and momentum both wrap around, so every state is a point on a torus.",
+     "start": 62.29,
+     "end": 68.39
+    },
+    {
+     "index": 13,
+     "clip": "821b488cc97b",
+     "beat": "rotor",
+     "show": "Some starting points circle forever on smooth curves: islands of stability.",
+     "say": "Some starting points circle forever on smooth curves. These are islands of stability.",
+     "start": 69.1,
+     "end": 75.66
+    },
+    {
+     "index": 14,
+     "clip": "ca52732a9ede",
+     "beat": "rotor",
+     "show": "Everywhere else is a chaotic sea.",
+     "say": "Everywhere else is a chaotic sea.",
+     "start": 76.37,
+     "end": 78.85
+    },
+    {
+     "index": 15,
+     "clip": "3b51557df39b",
+     "beat": "rotor",
+     "show": "Undo the drift, then undo the kick, and you are back where you started.",
+     "say": "Undo the drift, then undo the kick, and you are back where you started.",
+     "start": 79.56,
+     "end": 84.71
+    }
+   ]
+  },
+  "echo": {
+   "start": 85.81,
+   "end": 121.84,
+   "lines": [
+    {
+     "index": 16,
+     "clip": "3966f3cdbb96",
+     "beat": "echo",
+     "show": "A floating-point number carries about sixteen digits.",
+     "say": "A floating-point number carries about sixteen digits.",
+     "start": 86.17,
+     "end": 90.16
+    },
+    {
+     "index": 17,
+     "clip": "d34a8865dd17",
+     "beat": "echo",
+     "show": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.",
+     "say": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.",
+     "start": 90.87,
+     "end": 96.8
+    },
+    {
+     "index": 18,
+     "clip": "af2c9da3ef8c",
+     "beat": "echo",
+     "show": "Run fifty steps forward and fifty back, and the first pixels miss home.",
+     "say": "Run fifty steps forward and fifty back, and the first pixels miss home.",
+     "start": 97.51,
+     "end": 103.36
+    },
+    {
+     "index": 19,
+     "clip": "463733d2abbd",
+     "beat": "echo",
+     "show": "After a hundred, only the islands come back.",
+     "say": "After a hundred, only the islands come back.",
+     "start": 104.07,
+     "end": 107.69
+    },
+    {
+     "index": 20,
+     "clip": "81fee2d88740",
+     "beat": "echo",
+     "show": "The picture that returns is a map of where the motion is chaotic.",
+     "say": "The picture that returns is a map of where the motion is chaotic.",
+     "start": 108.4,
+     "end": 112.95
+    },
+    {
+     "index": 21,
+     "clip": "9543116cbc41",
+     "beat": "echo",
+     "show": "This is Loschmidt's echo: the laws run both ways, but rounding errors do not.",
+     "say": "This is Losh-mitt's echo. The laws run both ways, but rounding errors do not.",
+     "start": 113.66,
+     "end": 120.74
+    }
+   ]
+  },
+  "lattice": {
+   "start": 121.84,
+   "end": 168.6,
+   "lines": [
+    {
+     "index": 22,
+     "clip": "1e6698c2495c",
+     "beat": "lattice",
+     "show": "Now put the world on a grid of 256 by 256 cells.",
+     "say": "Now put the world on a grid of two hundred fifty-six by two hundred fifty-six cells.",
+     "start": 122.2,
+     "end": 128.18
+    },
+    {
+     "index": 23,
+     "clip": "e36606297aa4",
+     "beat": "lattice",
+     "show": "Round each kick to a whole number of cells, and keep everything else exact.",
+     "say": "Round each kick to a whole number of cells, and keep everything else exact.",
+     "start": 128.89,
+     "end": 134.55
+    },
+    {
+     "index": 24,
+     "clip": "116c641ed722",
+     "beat": "lattice",
+     "show": "Then a kick slides each column up by a whole number of cells.",
+     "say": "Then a kick slides each column up by a whole number of cells.",
+     "start": 135.26,
+     "end": 140.0
+    },
+    {
+     "index": 25,
+     "clip": "930e950dc31b",
+     "beat": "lattice",
+     "show": "A drift slides each row sideways by a whole number of cells.",
+     "say": "A drift slides each row sideways by a whole number of cells.",
+     "start": 140.71,
+     "end": 145.59
+    },
+    {
+     "index": 26,
+     "clip": "59a24ba5a939",
+     "beat": "lattice",
+     "show": "Sliding rows and columns can't make two cells collide, or leave a hole.",
+     "say": "Sliding rows and columns can't make two cells collide, or leave a hole.",
+     "start": 146.3,
+     "end": 152.4
+    },
+    {
+     "index": 27,
+     "clip": "d8cad9bd260a",
+     "beat": "lattice",
+     "show": "So each step just reshuffles the 65,536 cells.",
+     "say": "So each step just reshuffles the sixty-five thousand, five hundred thirty-six cells.",
+     "start": 153.11,
+     "end": 159.21
+    },
+    {
+     "index": 28,
+     "clip": "e20e0df63410",
+     "beat": "lattice",
+     "show": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.",
+     "say": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.",
+     "start": 159.92,
+     "end": 167.5
+    }
+   ]
+  },
+  "proof": {
+   "start": 168.6,
+   "end": 220.671,
+   "lines": [
+    {
+     "index": 29,
+     "clip": "dc909430a530",
+     "beat": "proof",
+     "show": "Here is the machine code: eleven ARM instructions forward, twelve back.",
+     "say": "Here is the machine code. Eleven arm instructions forward, twelve back.",
+     "start": 168.96,
+     "end": 175.06
+    },
+    {
+     "index": 30,
+     "clip": "903753642812",
+     "beat": "proof",
+     "show": "Each point is two bytes, and the kicks are a table of 256 bytes.",
+     "say": "Each point is two bytes, and the kicks are a table of two hundred fifty-six bytes.",
+     "start": 175.77,
+     "end": 181.87
+    },
+    {
+     "index": 31,
+     "clip": "d33394452f52",
+     "beat": "proof",
+     "show": "Byte arithmetic wraps around at 256, which is exactly the torus.",
+     "say": "Byte arithmetic wraps around at two hundred fifty-six, which is exactly the torus.",
+     "start": 182.58,
+     "end": 188.91
+    },
+    {
+     "index": 32,
+     "clip": "90bb0bfcd478",
+     "beat": "proof",
+     "show": "In the HOL Light theorem prover, we proved that these exact bytes compute this map,",
+     "say": "In the H-O-L Light theorem prover, we proved that these exact bytes compute this map,",
+     "start": 189.62,
+     "end": 195.921
+    },
+    {
+     "index": 33,
+     "clip": "43f351ced6a7",
+     "beat": "proof",
+     "show": "for every input, every kick table, and any number of points.",
+     "say": "for every input, every kick table, and any number of points.",
+     "start": 196.281,
+     "end": 201.521
+    },
+    {
+     "index": 34,
+     "clip": "0f91c9b90773",
+     "beat": "proof",
+     "show": "We also proved that the second routine undoes the first.",
+     "say": "We also proved that the second routine undoes the first.",
+     "start": 202.231,
+     "end": 206.221
+    },
+    {
+     "index": 35,
+     "clip": "3b73889979d6",
+     "beat": "proof",
+     "show": "The proof runs on a formal model of the ARM processor from the s2n-bignum project.",
+     "say": "The proof runs on a formal model of the arm processor from the s-two-n bignum project.",
+     "start": 206.931,
+     "end": 213.361
+    },
+    {
+     "index": 36,
+     "clip": "d2f3a2f65fab",
+     "beat": "proof",
+     "show": "It covers the machine code, not the loop that calls it or the pixels you see.",
+     "say": "It covers the machine code, not the loop that calls it or the pixels you see.",
+     "start": 214.071,
+     "end": 219.571
+    }
+   ]
+  },
+  "close": {
+   "start": 220.671,
+   "end": 240.921,
+   "lines": [
+    {
+     "index": 37,
+     "clip": "5b88316ce36e",
+     "beat": "close",
+     "show": "Last time, being symplectic meant a ball could not be squeezed.",
+     "say": "Last time, being symplectic meant a ball could not be squeezed.",
+     "start": 221.031,
+     "end": 226.261
+    },
+    {
+     "index": 38,
+     "clip": "c11525e05206",
+     "beat": "close",
+     "show": "In two dimensions, it just means keeping area.",
+     "say": "In two dimensions, it just means keeping area.",
+     "start": 226.971,
+     "end": 230.751
+    },
+    {
+     "index": 39,
+     "clip": "edfca7c20feb",
+     "beat": "close",
+     "show": "On a grid, keeping area means never losing a single pixel.",
+     "say": "On a grid, keeping area means never losing a single pixel.",
+     "start": 231.461,
+     "end": 236.211
+    },
+    {
+     "index": 40,
+     "clip": "a64be682b5ce",
+     "beat": "close",
+     "show": "Run it back, and the camel comes home.",
+     "say": "Run it back, and the camel comes home.",
+     "start": 236.921,
+     "end": 239.821
+    }
+   ]
+  },
+  "outro": {
+   "start": 240.921,
+   "end": 247.901,
+   "lines": [
+    {
+     "index": 41,
+     "clip": "2da2f40f2633",
+     "beat": "outro",
+     "show": "The interactive version and the proof are linked below.",
+     "say": "The interactive version and the proof are linked below.",
+     "start": 241.281,
+     "end": 244.801
+    }
+   ]
+  }
+ },
+ "lines": [
+  {
+   "index": 0,
+   "clip": "fc9ac804fa72",
+   "beat": "open",
+   "show": "This picture is about to be scrambled by chaos.",
+   "say": "This picture is about to be scrambled by chaos.",
+   "start": 1.46,
+   "end": 5.0
+  },
+  {
+   "index": 1,
+   "clip": "f8cbd76542d5",
+   "beat": "open",
+   "show": "Each step moves every pixel by a simple rule from physics.",
+   "say": "Each step moves every pixel by a simple rule from physics.",
+   "start": 5.71,
+   "end": 10.13
+  },
+  {
+   "index": 2,
+   "clip": "8346d2c99973",
+   "beat": "open",
+   "show": "After a hundred steps, it looks like noise.",
+   "say": "After a hundred steps, it looks like noise.",
+   "start": 10.84,
+   "end": 14.36
+  },
+  {
+   "index": 3,
+   "clip": "ccd0182d9a0e",
+   "beat": "open",
+   "show": "The rule can be run backwards exactly, at least on paper.",
+   "say": "The rule can be run backwards exactly, at least on paper.",
+   "start": 15.07,
+   "end": 19.53
+  },
+  {
+   "index": 4,
+   "clip": "db5d5440d233",
+   "beat": "open",
+   "show": "So let's run it backwards on a computer.",
+   "say": "So let's run it backwards on a computer.",
+   "start": 20.24,
+   "end": 23.45
+  },
+  {
+   "index": 5,
+   "clip": "6d4fc55508cb",
+   "beat": "open",
+   "show": "On the left, ordinary floating point. On the right, a version that lives on a grid.",
+   "say": "On the left, ordinary floating point. On the right, a version that lives on a grid.",
+   "start": 24.16,
+   "end": 30.46
+  },
+  {
+   "index": 6,
+   "clip": "e64d5b956baa",
+   "beat": "open",
+   "show": "Floating point brings back fragments. The grid brings back every pixel.",
+   "say": "Floating point brings back fragments. The grid brings back every pixel.",
+   "start": 31.17,
+   "end": 36.63
+  },
+  {
+   "index": 7,
+   "clip": "61b9920871a1",
+   "beat": "title",
+   "show": "Running chaos backwards.",
+   "say": "Running chaos backwards.",
+   "start": 37.79,
+   "end": 39.97
+  },
+  {
+   "index": 8,
+   "clip": "328bed9f9cca",
+   "beat": "rotor",
+   "show": "The rule is the kicked rotor, a standard model of chaos.",
+   "say": "The rule is the kicked rotor, a standard model of chaos.",
+   "start": 41.13,
+   "end": 45.69
+  },
+  {
+   "index": 9,
+   "clip": "24900cbab53b",
+   "beat": "rotor",
+   "show": "Picture a rod spinning freely, kicked at regular intervals.",
+   "say": "Picture a rod spinning freely, kicked at regular intervals.",
+   "start": 46.4,
+   "end": 50.93
+  },
+  {
+   "index": 10,
+   "clip": "7bf08e448e00",
+   "beat": "rotor",
+   "show": "Each kick changes its speed by an amount that depends on its angle.",
+   "say": "Each kick changes its speed by an amount that depends on its angle.",
+   "start": 51.64,
+   "end": 56.88
+  },
+  {
+   "index": 11,
+   "clip": "403685c75bd4",
+   "beat": "rotor",
+   "show": "Between kicks, the angle drifts forward at that speed.",
+   "say": "Between kicks, the angle drifts forward at that speed.",
+   "start": 57.59,
+   "end": 61.58
+  },
+  {
+   "index": 12,
+   "clip": "e17f107c9f0d",
+   "beat": "rotor",
+   "show": "Angle and momentum both wrap around, so every state is a point on a torus.",
+   "say": "Angle and momentum both wrap around, so every state is a point on a torus.",
+   "start": 62.29,
+   "end": 68.39
+  },
+  {
+   "index": 13,
+   "clip": "821b488cc97b",
+   "beat": "rotor",
+   "show": "Some starting points circle forever on smooth curves: islands of stability.",
+   "say": "Some starting points circle forever on smooth curves. These are islands of stability.",
+   "start": 69.1,
+   "end": 75.66
+  },
+  {
+   "index": 14,
+   "clip": "ca52732a9ede",
+   "beat": "rotor",
+   "show": "Everywhere else is a chaotic sea.",
+   "say": "Everywhere else is a chaotic sea.",
+   "start": 76.37,
+   "end": 78.85
+  },
+  {
+   "index": 15,
+   "clip": "3b51557df39b",
+   "beat": "rotor",
+   "show": "Undo the drift, then undo the kick, and you are back where you started.",
+   "say": "Undo the drift, then undo the kick, and you are back where you started.",
+   "start": 79.56,
+   "end": 84.71
+  },
+  {
+   "index": 16,
+   "clip": "3966f3cdbb96",
+   "beat": "echo",
+   "show": "A floating-point number carries about sixteen digits.",
+   "say": "A floating-point number carries about sixteen digits.",
+   "start": 86.17,
+   "end": 90.16
+  },
+  {
+   "index": 17,
+   "clip": "d34a8865dd17",
+   "beat": "echo",
+   "show": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.",
+   "say": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.",
+   "start": 90.87,
+   "end": 96.8
+  },
+  {
+   "index": 18,
+   "clip": "af2c9da3ef8c",
+   "beat": "echo",
+   "show": "Run fifty steps forward and fifty back, and the first pixels miss home.",
+   "say": "Run fifty steps forward and fifty back, and the first pixels miss home.",
+   "start": 97.51,
+   "end": 103.36
+  },
+  {
+   "index": 19,
+   "clip": "463733d2abbd",
+   "beat": "echo",
+   "show": "After a hundred, only the islands come back.",
+   "say": "After a hundred, only the islands come back.",
+   "start": 104.07,
+   "end": 107.69
+  },
+  {
+   "index": 20,
+   "clip": "81fee2d88740",
+   "beat": "echo",
+   "show": "The picture that returns is a map of where the motion is chaotic.",
+   "say": "The picture that returns is a map of where the motion is chaotic.",
+   "start": 108.4,
+   "end": 112.95
+  },
+  {
+   "index": 21,
+   "clip": "9543116cbc41",
+   "beat": "echo",
+   "show": "This is Loschmidt's echo: the laws run both ways, but rounding errors do not.",
+   "say": "This is Losh-mitt's echo. The laws run both ways, but rounding errors do not.",
+   "start": 113.66,
+   "end": 120.74
+  },
+  {
+   "index": 22,
+   "clip": "1e6698c2495c",
+   "beat": "lattice",
+   "show": "Now put the world on a grid of 256 by 256 cells.",
+   "say": "Now put the world on a grid of two hundred fifty-six by two hundred fifty-six cells.",
+   "start": 122.2,
+   "end": 128.18
+  },
+  {
+   "index": 23,
+   "clip": "e36606297aa4",
+   "beat": "lattice",
+   "show": "Round each kick to a whole number of cells, and keep everything else exact.",
+   "say": "Round each kick to a whole number of cells, and keep everything else exact.",
+   "start": 128.89,
+   "end": 134.55
+  },
+  {
+   "index": 24,
+   "clip": "116c641ed722",
+   "beat": "lattice",
+   "show": "Then a kick slides each column up by a whole number of cells.",
+   "say": "Then a kick slides each column up by a whole number of cells.",
+   "start": 135.26,
+   "end": 140.0
+  },
+  {
+   "index": 25,
+   "clip": "930e950dc31b",
+   "beat": "lattice",
+   "show": "A drift slides each row sideways by a whole number of cells.",
+   "say": "A drift slides each row sideways by a whole number of cells.",
+   "start": 140.71,
+   "end": 145.59
+  },
+  {
+   "index": 26,
+   "clip": "59a24ba5a939",
+   "beat": "lattice",
+   "show": "Sliding rows and columns can't make two cells collide, or leave a hole.",
+   "say": "Sliding rows and columns can't make two cells collide, or leave a hole.",
+   "start": 146.3,
+   "end": 152.4
+  },
+  {
+   "index": 27,
+   "clip": "d8cad9bd260a",
+   "beat": "lattice",
+   "show": "So each step just reshuffles the 65,536 cells.",
+   "say": "So each step just reshuffles the sixty-five thousand, five hundred thirty-six cells.",
+   "start": 153.11,
+   "end": 159.21
+  },
+  {
+   "index": 28,
+   "clip": "e20e0df63410",
+   "beat": "lattice",
+   "show": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.",
+   "say": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.",
+   "start": 159.92,
+   "end": 167.5
+  },
+  {
+   "index": 29,
+   "clip": "dc909430a530",
+   "beat": "proof",
+   "show": "Here is the machine code: eleven ARM instructions forward, twelve back.",
+   "say": "Here is the machine code. Eleven arm instructions forward, twelve back.",
+   "start": 168.96,
+   "end": 175.06
+  },
+  {
+   "index": 30,
+   "clip": "903753642812",
+   "beat": "proof",
+   "show": "Each point is two bytes, and the kicks are a table of 256 bytes.",
+   "say": "Each point is two bytes, and the kicks are a table of two hundred fifty-six bytes.",
+   "start": 175.77,
+   "end": 181.87
+  },
+  {
+   "index": 31,
+   "clip": "d33394452f52",
+   "beat": "proof",
+   "show": "Byte arithmetic wraps around at 256, which is exactly the torus.",
+   "say": "Byte arithmetic wraps around at two hundred fifty-six, which is exactly the torus.",
+   "start": 182.58,
+   "end": 188.91
+  },
+  {
+   "index": 32,
+   "clip": "90bb0bfcd478",
+   "beat": "proof",
+   "show": "In the HOL Light theorem prover, we proved that these exact bytes compute this map,",
+   "say": "In the H-O-L Light theorem prover, we proved that these exact bytes compute this map,",
+   "start": 189.62,
+   "end": 195.921
+  },
+  {
+   "index": 33,
+   "clip": "43f351ced6a7",
+   "beat": "proof",
+   "show": "for every input, every kick table, and any number of points.",
+   "say": "for every input, every kick table, and any number of points.",
+   "start": 196.281,
+   "end": 201.521
+  },
+  {
+   "index": 34,
+   "clip": "0f91c9b90773",
+   "beat": "proof",
+   "show": "We also proved that the second routine undoes the first.",
+   "say": "We also proved that the second routine undoes the first.",
+   "start": 202.231,
+   "end": 206.221
+  },
+  {
+   "index": 35,
+   "clip": "3b73889979d6",
+   "beat": "proof",
+   "show": "The proof runs on a formal model of the ARM processor from the s2n-bignum project.",
+   "say": "The proof runs on a formal model of the arm processor from the s-two-n bignum project.",
+   "start": 206.931,
+   "end": 213.361
+  },
+  {
+   "index": 36,
+   "clip": "d2f3a2f65fab",
+   "beat": "proof",
+   "show": "It covers the machine code, not the loop that calls it or the pixels you see.",
+   "say": "It covers the machine code, not the loop that calls it or the pixels you see.",
+   "start": 214.071,
+   "end": 219.571
+  },
+  {
+   "index": 37,
+   "clip": "5b88316ce36e",
+   "beat": "close",
+   "show": "Last time, being symplectic meant a ball could not be squeezed.",
+   "say": "Last time, being symplectic meant a ball could not be squeezed.",
+   "start": 221.031,
+   "end": 226.261
+  },
+  {
+   "index": 38,
+   "clip": "c11525e05206",
+   "beat": "close",
+   "show": "In two dimensions, it just means keeping area.",
+   "say": "In two dimensions, it just means keeping area.",
+   "start": 226.971,
+   "end": 230.751
+  },
+  {
+   "index": 39,
+   "clip": "edfca7c20feb",
+   "beat": "close",
+   "show": "On a grid, keeping area means never losing a single pixel.",
+   "say": "On a grid, keeping area means never losing a single pixel.",
+   "start": 231.461,
+   "end": 236.211
+  },
+  {
+   "index": 40,
+   "clip": "a64be682b5ce",
+   "beat": "close",
+   "show": "Run it back, and the camel comes home.",
+   "say": "Run it back, and the camel comes home.",
+   "start": 236.921,
+   "end": 239.821
+  },
+  {
+   "index": 41,
+   "clip": "2da2f40f2633",
+   "beat": "outro",
+   "show": "The interactive version and the proof are linked below.",
+   "say": "The interactive version and the proof are linked below.",
+   "start": 241.281,
+   "end": 244.801
+  }
+ ]
+}

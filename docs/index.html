@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Running Chaos Backwards</title>
+<meta name="description" content="Scramble a picture with the kicked rotor, then run it backwards: floating point loses it, an exact lattice brings back every pixel. The lattice kernel's ARM machine code is proven correct in HOL Light.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0A0D14; --panel: #10151F; --panel-2: #141A26; --line: #1F2736; --line-2: #2C3649;
+    --text: #DCE2EC; --muted: #8A95AA; --faint: #5A6479;
+    --cool: #4FD1C5; --lav: #A99CFF; --amber: #FFB547; --glass: #6FA8FF; --good: #5FD39A; --bad: #FF7A6B;
+    --serif: "STIX Two Text", "Times New Roman", serif;
+    --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 15px; line-height: 1.5; padding-inline: 16px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding-block: 28px 56px; display: flex; flex-direction: column; gap: 22px; }
+  header { display: flex; flex-direction: column; gap: 6px; }
+  h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(28px, 5vw, 42px); margin: 0; text-wrap: balance; }
+  .lede { font-family: var(--serif); font-size: 19px; color: var(--muted); margin: 0; max-width: 62ch; }
+  .panels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .pane { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 10px; }
+  .pane-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .pane-title { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  .stat { font-family: var(--mono); font-size: 14px; font-variant-numeric: tabular-nums; }
+  .stat.ok { color: var(--good); } .stat.no { color: var(--bad); }
+  canvas { width: 100%; aspect-ratio: 1; image-rendering: pixelated; border-radius: 4px; background: #0E131E; display: block; max-width: 100%; }
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; padding: 12px 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; }
+  button { font: inherit; color: var(--text); background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 6px; padding: 8px 14px; cursor: pointer; }
+  button:hover { border-color: var(--faint); }
+  button.primary { border-color: var(--glass); color: #fff; background: #172238; }
+  button:disabled { opacity: .45; cursor: default; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--glass); outline-offset: 2px; }
+  label.slider { display: flex; align-items: center; gap: 8px; color: var(--muted); font-size: 14px; }
+  label.slider input { width: 140px; accent-color: var(--glass); }
+  output { font-family: var(--mono); color: var(--text); min-width: 3ch; font-variant-numeric: tabular-nums; }
+  .status { margin-left: auto; font-family: var(--mono); font-size: 14px; color: var(--muted); }
+  .explain { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .explain section { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 16px 18px; }
+  .explain h2 { font-family: var(--serif); font-size: 21px; font-weight: 600; margin: 0 0 8px; }
+  .explain p { margin: 0 0 10px; color: #B9C2D2; }
+  .explain p:last-child { margin-bottom: 0; }
+  .eq { font-family: var(--serif); font-size: 17px; color: var(--glass); }
+  code, .mono { font-family: var(--mono); font-size: 13.5px; }
+  pre { margin: 0; font-family: var(--mono); font-size: 13px; line-height: 1.45; background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; overflow-x: auto; color: var(--text); }
+  pre .c { color: var(--faint); }
+  a { color: var(--glass); }
+  footer { color: var(--faint); font-size: 13px; }
+  @media (max-width: 860px) { .explain { grid-template-columns: minmax(0, 1fr); } }
+  @media (max-width: 560px) { .panels { grid-template-columns: minmax(0, 1fr); } .status { margin-left: 0; } }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Running Chaos Backwards</h1>
+    <p class="lede">Scramble a picture with the kicked rotor, then run the same rule backwards. Floating point brings back only the islands of stability. A lattice version brings back every pixel.</p>
+  </header>
+
+  <div class="panels">
+    <div class="pane">
+      <div class="pane-head"><span class="pane-title">Floating point (double precision)</span><span class="stat" id="statF">100% of pixels in place</span></div>
+      <canvas id="cvF" width="256" height="256" aria-label="Floating-point simulation of the kicked rotor"></canvas>
+    </div>
+    <div class="pane">
+      <div class="pane-head"><span class="pane-title">Exact lattice</span><span class="stat ok" id="statL">100% of pixels in place</span></div>
+      <canvas id="cvL" width="256" height="256" aria-label="Exact lattice simulation of the kicked rotor"></canvas>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="fwd">Scramble</button>
+    <button id="bwd" disabled>Run backwards</button>
+    <button id="reset">Reset</button>
+    <label class="slider" for="steps">Steps <input type="range" id="steps" min="10" max="200" step="5" value="100"><output id="stepsOut">100</output></label>
+    <label class="slider" for="K">Kick strength K <input type="range" id="K" min="0.5" max="4" step="0.1" value="2"><output id="KOut">2.0</output></label>
+    <span class="status" id="status">step 0</span>
+  </div>
+
+  <div class="explain">
+    <section>
+      <h2>The kicked rotor</h2>
+      <p>A rod spins freely and is kicked at regular intervals. Each kick changes its momentum by an amount that depends on its angle; between kicks the angle drifts forward.</p>
+      <p class="eq">p ← p + K sin x, &nbsp; x ← x + p</p>
+      <p>Both wrap around, so each pixel of the picture is a state on a torus. Undo the drift, then the kick, and you are back where you started.</p>
+    </section>
+    <section>
+      <h2>Why floating point fails</h2>
+      <p>A double carries about sixteen digits. In the chaotic sea a rounding error grows about a hundredfold every ten steps, so after roughly fifty steps each way the first pixels miss home.</p>
+      <p>Points on the islands of stability drift apart slowly, so they return. The picture that comes back is a map of where the motion is chaotic. This is Loschmidt's echo.</p>
+    </section>
+    <section>
+      <h2>Why the lattice doesn't</h2>
+      <p>On a 256 × 256 grid, round the kick to a whole number of cells and keep everything else exact. A kick then slides each column by whole cells, and a drift slides each row. Neither can make two cells collide, so each step is a reshuffle of the 65,536 cells.</p>
+      <p>Nothing is merged or lost, so running backwards is exact at any K and any number of steps.</p>
+    </section>
+  </div>
+
+  <section class="pane" aria-labelledby="proof-h">
+    <h2 id="proof-h" style="font-family:var(--serif);font-size:21px;margin:4px 4px 0">The verified kernel</h2>
+    <p style="margin:0 4px;color:#B9C2D2;max-width:80ch">The lattice step is 11 AArch64 instructions forward and 12 backward. Each point is two bytes, so wrapping at 256 is free. In HOL Light, against s2n-bignum's formal model of ARM, the exact object bytes are proven to compute this map for every input array and every 256-byte kick table. The backward routine is also proven to undo the forward one. The proof covers the machine code, not the page's loop or its pixels. This page runs a JavaScript port whose output was checked, step by step, against the verified code.</p>
+<pre>lattice_fwd:
+    cbz   x1, 2f
+1:  ldrb  w3, [x0]          <span class="c">// x</span>
+    ldrb  w4, [x0, #1]      <span class="c">// p</span>
+    ldrb  w5, [x2, x3]      <span class="c">// kick[x]</span>
+    add   w4, w4, w5        <span class="c">// p + kick[x]</span>
+    add   w3, w3, w4        <span class="c">// x + p</span>
+    strb  w4, [x0, #1]      <span class="c">// low byte = mod 256</span>
+    strb  w3, [x0], #2
+    subs  x1, x1, #1
+    b.ne  1b
+2:  ret</pre>
+    <p style="margin:0 4px;color:var(--muted)">Source, proof and video pipeline: <a href="https://github.com/BenKnill/lattice-echo">github.com/BenKnill/lattice-echo</a> · Episode 1: <a href="https://benknill.github.io/symplectic-camel/">the symplectic camel</a></p>
+  </section>
+
+  <footer>Built with Claude (Anthropic's Claude Opus 5.5) in Claude Code.</footer>
+</div>
+
+<script src="lattice.js"></script>
+<script src="camel.js"></script>
+<script>
+(() => {
+  const L = window.Lattice, N = L.N;
+  const $ = id => document.getElementById(id);
+  const cvF = $("cvF"), cvL = $("cvL"), gF = cvF.getContext("2d"), gL = cvL.getContext("2d");
+  const imgF = gF.createImageData(N, N), imgL = gL.createImageData(N, N);
+  let colors = null, K = 2, kick = L.kickTable(K);
+  let pts, xs, ys, x0, y0, step = 0, target = 0, dir = 0, timer = null;
+
+  function reset() {
+    pts = L.initialPoints();
+    xs = new Float64Array(N * N); ys = new Float64Array(N * N);
+    for (let i = 0; i < N * N; i++) { xs[i] = (pts[2 * i] + 0.5) / N; ys[i] = (pts[2 * i + 1] + 0.5) / N; }
+    x0 = xs.slice(); y0 = ys.slice(); step = 0; dir = 0; draw();
+  }
+  function paint(img, g, cellAt) {
+    const d = img.data;
+    for (let o = 0; o < d.length; o += 4) { d[o] = 14; d[o + 1] = 19; d[o + 2] = 30; d[o + 3] = 255; }
+    for (let i = 0; i < N * N; i++) {
+      const [x, p] = cellAt(i), q = 4 * ((((N / 2 - 1 - p) % N + N) % N) * N + x);
+      d[q] = colors[4 * i]; d[q + 1] = colors[4 * i + 1]; d[q + 2] = colors[4 * i + 2];
+    }
+    g.putImageData(img, 0, 0);
+  }
+  function draw() {
+    if (!colors) return;
+    paint(imgF, gF, i => [Math.floor(xs[i] * N) & 255, Math.floor(ys[i] * N) & 255]);
+    paint(imgL, gL, i => [pts[2 * i], pts[2 * i + 1]]);
+    let okF = 0, okL = 0;
+    const P0 = L.initialPoints();
+    for (let i = 0; i < N * N; i++) {
+      if ((Math.floor(xs[i] * N) & 255) === P0[2 * i] && (Math.floor(ys[i] * N) & 255) === P0[2 * i + 1]) okF++;
+      if (pts[2 * i] === P0[2 * i] && pts[2 * i + 1] === P0[2 * i + 1]) okL++;
+    }
+    const f = okF / (N * N), l = okL / (N * N);
+    $("statF").textContent = `${(100 * f).toFixed(1)}% of pixels in place`;
+    $("statF").className = "stat " + (f > 0.999 ? "ok" : step === 0 ? "no" : "");
+    $("statL").textContent = `${(100 * l).toFixed(1)}% of pixels in place`;
+    $("statL").className = "stat " + (l > 0.999 ? "ok" : "");
+    $("status").textContent = dir > 0 ? `scrambling: step ${step}` : dir < 0 ? `running back: ${step} to go` : step ? `scrambled: ${step} steps` : "step 0";
+    $("bwd").disabled = step === 0 || dir !== 0;
+    $("fwd").disabled = dir !== 0;
+  }
+  function run(d) {
+    const n = +$("steps").value; dir = d; target = d > 0 ? step + n : 0;
+    const reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const perTick = reduce ? 1e9 : Math.max(1, Math.round(n / 60));
+    clearInterval(timer);
+    timer = setInterval(() => {
+      for (let j = 0; j < perTick && step !== target; j++) {
+        if (dir > 0) { L.fwd(pts, kick); L.floatFwd(xs, ys, K); step++; }
+        else { L.bwd(pts, kick); L.floatBwd(xs, ys, K); step--; }
+      }
+      if (step === target) { clearInterval(timer); dir = 0; }
+      draw();
+    }, 16);
+    draw();
+  }
+  $("fwd").addEventListener("click", () => run(1));
+  $("bwd").addEventListener("click", () => run(-1));
+  $("reset").addEventListener("click", () => { clearInterval(timer); reset(); });
+  $("steps").addEventListener("input", () => { $("stepsOut").textContent = $("steps").value; });
+  $("K").addEventListener("input", () => {
+    K = +$("K").value; $("KOut").textContent = K.toFixed(1);
+    clearInterval(timer); kick = L.kickTable(K); reset();
+  });
+  const im = new Image();
+  im.onload = () => {
+    const c = document.createElement("canvas"); c.width = c.height = N;
+    const g = c.getContext("2d"); g.drawImage(im, 0, 0); colors = g.getImageData(0, 0, N, N).data; reset();
+  };
+  im.src = window.CAMEL_PNG;
+})();
+</script>
+</body>
+</html>

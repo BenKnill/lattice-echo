@@ -1,0 +1,167 @@
+1
+00:00:01,380 --> 00:00:05,690
+This picture is about to be scrambled by chaos.
+
+2
+00:00:05,630 --> 00:00:10,820
+Each step moves every pixel by a simple rule from physics.
+
+3
+00:00:10,760 --> 00:00:15,050
+After a hundred steps, it looks like noise.
+
+4
+00:00:14,990 --> 00:00:20,220
+The rule can be run backwards exactly, at least on paper.
+
+5
+00:00:20,160 --> 00:00:24,140
+So let's run it backwards on a computer.
+
+6
+00:00:24,080 --> 00:00:31,150
+On the left, ordinary floating point. On the right, a version that lives on a grid.
+
+7
+00:00:31,090 --> 00:00:36,960
+Floating point brings back fragments. The grid brings back every pixel.
+
+8
+00:00:37,710 --> 00:00:40,300
+Running chaos backwards.
+
+9
+00:00:41,050 --> 00:00:46,380
+The rule is the kicked rotor, a standard model of chaos.
+
+10
+00:00:46,320 --> 00:00:51,620
+Picture a rod spinning freely, kicked at regular intervals.
+
+11
+00:00:51,560 --> 00:00:57,570
+Each kick changes its speed by an amount that depends on its angle.
+
+12
+00:00:57,510 --> 00:01:02,270
+Between kicks, the angle drifts forward at that speed.
+
+13
+00:01:02,210 --> 00:01:09,080
+Angle and momentum both wrap around, so every state is a point on a torus.
+
+14
+00:01:09,020 --> 00:01:16,350
+Some starting points circle forever on smooth curves: islands of stability.
+
+15
+00:01:16,290 --> 00:01:19,540
+Everywhere else is a chaotic sea.
+
+16
+00:01:19,480 --> 00:01:25,040
+Undo the drift, then undo the kick, and you are back where you started.
+
+17
+00:01:26,090 --> 00:01:30,850
+A floating-point number carries about sixteen digits.
+
+18
+00:01:30,790 --> 00:01:37,490
+In the chaotic sea, a tiny error grows about a hundredfold every ten steps.
+
+19
+00:01:37,430 --> 00:01:44,050
+Run fifty steps forward and fifty back, and the first pixels miss home.
+
+20
+00:01:43,990 --> 00:01:48,380
+After a hundred, only the islands come back.
+
+21
+00:01:48,320 --> 00:01:53,640
+The picture that returns is a map of where the motion is chaotic.
+
+22
+00:01:53,580 --> 00:02:01,070
+This is Loschmidt's echo: the laws run both ways, but rounding errors do not.
+
+23
+00:02:02,120 --> 00:02:08,870
+Now put the world on a grid of 256 by 256 cells.
+
+24
+00:02:08,810 --> 00:02:15,240
+Round each kick to a whole number of cells, and keep everything else exact.
+
+25
+00:02:15,180 --> 00:02:20,690
+Then a kick slides each column up by a whole number of cells.
+
+26
+00:02:20,630 --> 00:02:26,280
+A drift slides each row sideways by a whole number of cells.
+
+27
+00:02:26,220 --> 00:02:33,090
+Sliding rows and columns can't make two cells collide, or leave a hole.
+
+28
+00:02:33,030 --> 00:02:39,900
+So each step just reshuffles the 65,536 cells.
+
+29
+00:02:39,840 --> 00:02:47,830
+Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.
+
+30
+00:02:48,880 --> 00:02:55,750
+Here is the machine code: eleven ARM instructions forward, twelve back.
+
+31
+00:02:55,690 --> 00:03:02,560
+Each point is two bytes, and the kicks are a table of 256 bytes.
+
+32
+00:03:02,500 --> 00:03:09,600
+Byte arithmetic wraps around at 256, which is exactly the torus.
+
+33
+00:03:09,540 --> 00:03:16,261
+In the HOL Light theorem prover, we proved that these exact bytes compute this map,
+
+34
+00:03:16,201 --> 00:03:22,211
+for every input, every kick table, and any number of points.
+
+35
+00:03:22,151 --> 00:03:26,911
+We also proved that the second routine undoes the first.
+
+36
+00:03:26,851 --> 00:03:34,051
+The proof runs on a formal model of the ARM processor from the s2n-bignum project.
+
+37
+00:03:33,991 --> 00:03:39,901
+It covers the machine code, not the loop that calls it or the pixels you see.
+
+38
+00:03:40,951 --> 00:03:46,951
+Last time, being symplectic meant a ball could not be squeezed.
+
+39
+00:03:46,891 --> 00:03:51,441
+In two dimensions, it just means keeping area.
+
+40
+00:03:51,381 --> 00:03:56,901
+On a grid, keeping area means never losing a single pixel.
+
+41
+00:03:56,841 --> 00:04:00,151
+Run it back, and the camel comes home.
+
+42
+00:04:01,201 --> 00:04:05,131
+The interactive version and the proof are linked below.

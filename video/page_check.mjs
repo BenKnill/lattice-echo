@@ -1,0 +1,10 @@
+import puppeteer from 'puppeteer-core';
+const b = await puppeteer.launch({ executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', headless:'new', args:['--hide-scrollbars'] });
+const p = await b.newPage(); await p.setViewport({width:1280,height:1500});
+p.on('pageerror', e => console.log('[pageerror]', e.message));
+await p.goto('file:///Users/boxer/ben-advice/lattice-echo/docs/index.html', {waitUntil:'networkidle0'});
+await p.click('#fwd'); await p.waitForFunction(() => document.getElementById('status').textContent.startsWith('scrambled'), {timeout: 60000});
+await p.click('#bwd'); await p.waitForFunction(() => document.getElementById('status').textContent === 'step 0', {timeout: 60000});
+console.log(await p.$eval('#statF', e => e.textContent), '|', await p.$eval('#statL', e => e.textContent));
+await p.screenshot({path:'/Users/boxer/ben-advice/lattice-echo/proto/page.jpg', type:'jpeg', quality:80});
+await b.close();

@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Running Chaos Backwards · film</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root { --bg:#0A0D14; --line:#1F2736; --line-2:#2C3649; --text:#DCE2EC; --muted:#8A95AA; --faint:#5A6479;
+    --cool:#4FD1C5; --lav:#A99CFF; --amber:#FFB547; --glass:#6FA8FF; --good:#5FD39A; --bad:#FF7A6B;
+    --serif:"STIX Two Text","Times New Roman",serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",Menlo,monospace; }
+  html, body { margin:0; width:1920px; height:1080px; overflow:hidden; background:var(--bg); color:var(--text); font-family:var(--sans); }
+  #frame { position:relative; width:1920px; height:1080px; overflow:hidden; background: radial-gradient(90% 90% at 50% 45%, #111827 0%, var(--bg) 70%); }
+  canvas#cv { position:absolute; inset:0; }
+  .abs { position:absolute; }
+  #caption { left:72px; top:48px; display:flex; flex-direction:column; gap:8px; }
+  #caption .eyebrow { font-size:17px; letter-spacing:.14em; text-transform:uppercase; color:var(--faint); }
+  #caption .title { font-family:var(--serif); font-weight:600; font-size:44px; }
+  .plabel { font-size:19px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); text-align:center; width:768px; }
+  .plabel b { font-weight:500; }
+  .plabel .ok { color:var(--good); } .plabel .no { color:var(--bad); }
+  #stepctr { font-family:var(--mono); font-size:24px; color:var(--muted); width:768px; text-align:center; }
+  #titlecard { left:0; right:0; top:390px; text-align:center; }
+  #titlecard .t { font-family:var(--serif); font-weight:600; font-size:104px; }
+  #titlecard .s { font-family:var(--serif); font-style:italic; font-size:38px; color:var(--muted); margin-top:14px; }
+  #formula { left:1024px; top:960px; width:768px; font-family:var(--serif); font-size:30px; text-align:center; color:var(--text); }
+  #formula b { color:var(--glass); font-weight:400; }
+  #digits { left:1040px; top:190px; width:760px; font-family:var(--mono); font-size:34px; }
+  #digits .k { font-family:var(--sans); font-size:17px; letter-spacing:.12em; text-transform:uppercase; color:var(--faint); margin:0 0 6px; }
+  #digits .v { margin-bottom:22px; } #digits .r { color:var(--bad); } #digits .w { color:#F1F4F9; }
+  #card { left:0; right:0; top:360px; text-align:center; }
+  #card .t { font-family:var(--serif); font-weight:600; font-size:66px; }
+  #card .s { font-family:var(--serif); font-size:34px; color:var(--muted); margin-top:18px; }
+  #code { left:96px; top:150px; font-family:var(--mono); font-size:24px; line-height:1.42; white-space:pre; }
+  #code .ln { color:var(--text); transition:none; }
+  #code .c { color:var(--faint); }
+  #code .hl { color:#fff; background:rgba(111,168,255,.16); }
+  #code .lbl { color:var(--amber); }
+  #thm { left:1010px; top:150px; width:820px; display:flex; flex-direction:column; gap:18px; }
+  #thm .box { border:1px solid var(--line-2); border-radius:8px; padding:20px 24px; background:rgba(16,21,31,.85); }
+  #thm .name { font-family:var(--mono); font-size:18px; color:var(--glass); letter-spacing:.02em; margin-bottom:10px; }
+  #thm .st { font-family:var(--serif); font-size:28px; line-height:1.4; }
+  #thm .note { font-size:20px; color:var(--muted); line-height:1.45; }
+  #thm .note b { color:var(--good); font-weight:500; } #thm .note i { color:var(--amber); font-style:normal; }
+  #count { left:0; right:0; top:930px; text-align:center; font-family:var(--mono); font-size:30px; color:var(--muted); }
+  #ep1 { left:1040px; top:250px; width:720px; border-radius:8px; border:1px solid var(--line-2); }
+  #ep1cap { left:1040px; top:670px; width:720px; font-family:var(--serif); font-style:italic; font-size:28px; color:var(--muted); text-align:center; }
+  #outro { left:0; right:0; top:360px; text-align:center; }
+  #outro .t { font-family:var(--serif); font-weight:600; font-size:80px; }
+  #outro .u { font-family:var(--mono); font-size:30px; color:var(--glass); margin-top:24px; line-height:1.6; }
+  #outro .c { font-size:22px; color:var(--faint); margin-top:36px; }
+  #sub { left:0; right:0; bottom:44px; text-align:center; pointer-events:none; }
+  #sub span { display:inline-block; max-width:1240px; font-size:36px; line-height:1.3; color:#F1F4F9;
+    text-shadow:0 0 18px rgba(10,13,20,.95), 0 2px 4px rgba(10,13,20,.9); text-wrap:balance; }
+</style>
+</head>
+<body>
+<div id="frame">
+  <canvas id="cv" width="1920" height="1080"></canvas>
+  <div class="abs" id="caption"><div class="eyebrow" id="cap-e"></div><div class="title" id="cap-t"></div></div>
+  <div class="abs plabel" id="labL"></div>
+  <div class="abs plabel" id="labR"></div>
+  <div class="abs" id="stepctr"></div>
+  <div class="abs" id="titlecard"><div class="t">Running Chaos Backwards</div><div class="s">the kicked rotor, floating point, and a verified lattice</div></div>
+  <div class="abs" id="formula"></div>
+  <div class="abs" id="digits">
+    <div class="k">starting angle of one point in the chaotic sea</div><div class="v w" id="d0"></div>
+    <div class="k" id="dk">after the round trip</div><div class="v" id="d1"></div>
+  </div>
+  <div class="abs" id="card"><div class="t" id="card-t"></div><div class="s" id="card-s"></div></div>
+  <div class="abs" id="code"></div>
+  <div class="abs" id="thm">
+    <div class="box"><div class="name">LATTICE_FWD_SUBROUTINE_CORRECT</div>
+      <div class="st">For every array of <i>n</i> points and every 256-byte kick table, running these bytes replaces each point (<i>x</i>, <i>p</i>) by (<i>x</i> + <i>p</i> + kick[<i>x</i>], <i>p</i> + kick[<i>x</i>]) mod 256 and returns.</div></div>
+    <div class="box" id="thm2"><div class="name">LATTICE_BWD_SUBROUTINE_CORRECT &nbsp;·&nbsp; LATTICE_ECHO_ROUND_TRIP</div>
+      <div class="st">The second routine computes the inverse, so backward after forward returns every byte.</div></div>
+    <div class="note" id="thm3"><b>Checked in HOL Light</b> against the s2n-bignum ARM model · no new axioms<br><i>Not proven:</i> the loop that calls the kernel, and the pixels on screen. Every exact frame was checked against the kernel's output.</div>
+  </div>
+  <img class="abs" id="ep1" alt="">
+  <div class="abs" id="ep1cap">Episode 1: a symplectic map cannot squeeze the ball</div>
+  <div class="abs" id="count"></div>
+  <div class="abs" id="outro"><div class="t">Try it yourself</div>
+    <div class="u">benknill.github.io/lattice-echo<br>github.com/BenKnill/lattice-echo</div>
+    <div class="c">Narration synthesized with VoxCPM2 · proof checked in HOL Light</div></div>
+  <div class="abs" id="sub"><span id="subText"></span></div>
+</div>
+<script src="../web/lattice.js"></script>
+<script src="../web/camel.js"></script>
+<script src="../web/ep1.js"></script>
+<script src="timing.js"></script>
+<script>
+(() => {
+  const W = 1920, H = 1080, N = 256, S = 3, PS = 768, K = 2.0, KMAX = 100;
+  const T = window.TIMING, $ = id => document.getElementById(id);
+  const beat = id => T.beats[id], line = (id, i) => T.beats[id].lines[i];
+  const clamp01 = x => Math.min(1, Math.max(0, x));
+  const ease = x => { x = clamp01(x); return x * x * x * (x * (6 * x - 15) + 10); };
+  const sm = (t, a, b) => ease((t - a) / Math.max(1e-6, b - a));
+  const lin = (t, a, b) => clamp01((t - a) / Math.max(1e-6, b - a));
+  const cv = $("cv"), ctx = cv.getContext("2d");
+  const L = window.Lattice;
+  const PANEL = { single: [576, 150], left: [128, 150], right: [1024, 150] };
+
+  // ---------- precomputation ----------
+  let colors, kick, latt, fFwd, fBack, rtCells, rtMedian, rtX, x0sea, orbits, rotorStates;
+  function prepare() {
+    const c = document.createElement("canvas"); c.width = c.height = N;
+    const g = c.getContext("2d"); g.drawImage(camelImage, 0, 0);
+    colors = g.getImageData(0, 0, N, N).data;                 // RGBA per display pixel
+    kick = L.kickTable(K);
+    latt = [L.initialPoints()];
+    for (let k = 1; k <= KMAX; k++) { const p = latt[k - 1].slice(); L.fwd(p, kick); latt.push(p); }
+    // float lane: points at cell centres, same display order
+    const P0 = L.initialPoints(), xs = new Float64Array(N * N), ys = new Float64Array(N * N);
+    for (let i = 0; i < N * N; i++) { xs[i] = (P0[2 * i] + 0.5) / N; ys[i] = (P0[2 * i + 1] + 0.5) / N; }
+    const cells = (a, b) => { const o = new Uint8Array(2 * N * N); for (let i = 0; i < N * N; i++) { o[2 * i] = Math.floor(a[i] * N) & 255; o[2 * i + 1] = Math.floor(b[i] * N) & 255; } return o; };
+    const x0 = xs.slice(), y0 = ys.slice();
+    fFwd = [cells(xs, ys)]; rtCells = [cells(xs, ys)]; rtMedian = [0];
+    const SEA = 40 * N + 30; x0sea = x0[SEA]; rtX = [x0sea];
+    const fx = xs.slice(), fy = ys.slice(), err = new Float64Array(N * N);
+    for (let k = 1; k <= KMAX; k++) {
+      L.floatFwd(fx, fy, K); fFwd.push(cells(fx, fy));
+      const bx = fx.slice(), by = fy.slice();
+      for (let j = 0; j < k; j++) L.floatBwd(bx, by, K);
+      rtCells.push(cells(bx, by)); rtX.push(bx[SEA]);
+      for (let i = 0; i < N * N; i++) {
+        let dx = Math.abs(bx[i] - x0[i]); dx = Math.min(dx, 1 - dx);
+        let dy = Math.abs(by[i] - y0[i]); dy = Math.min(dy, 1 - dy);
+        err[i] = Math.max(dx, dy);
+      }
+      rtMedian.push(err.slice().sort()[N * N >> 1]);
+      if (k === KMAX) {
+        fBack = [cells(fx, fy)];
+        const gx = fx.slice(), gy = fy.slice();
+        for (let j = 1; j <= KMAX; j++) { L.floatBwd(gx, gy, K); fBack.push(cells(gx, gy)); }
+      }
+    }
+    // phase portrait: island curves and chaotic-sea orbits (unit torus, float map)
+    orbits = [];
+    const orbit = (x, y, n, col) => { const X = new Float64Array(1), Y = new Float64Array(1); X[0] = x; Y[0] = y; const pts = []; for (let i = 0; i < n; i++) { L.floatFwd(X, Y, K); pts.push(X[0], Y[0]); } orbits.push({ pts, col }); };
+    for (let d = 0.01; d < 0.2; d += 0.018) orbit(0.5, d, 700, [79, 209, 197]);
+    for (let s = 0; s < 14; s++) orbit(0.05 + 0.063 * s, 0.43 + 0.01 * s, 900, [255, 181, 71]);
+    // rotor: one chaotic trajectory
+    rotorStates = [[0.119, 0.37]];
+    for (let n = 0; n < 400; n++) { const X = new Float64Array([rotorStates[n][0]]), Y = new Float64Array([rotorStates[n][1]]); L.floatFwd(X, Y, K); rotorStates.push([X[0], Y[0]]); }
+  }
+
+  // ---------- drawing ----------
+  const img = ctx.createImageData(PS, PS), pcv = document.createElement("canvas");
+  pcv.width = pcv.height = PS; const pctx = pcv.getContext("2d");
+  const small = document.createElement("canvas"); small.width = small.height = N; const sctx = small.getContext("2d");
+  const simg = sctx.createImageData(N, N);
+  const BG = [14, 19, 30];
+  // paint point i (original pixel) at cell (x, p) with fractional offsets; mode = null | "kick" | "drift"
+  function paint(pts, mode, f) {
+    const d = img.data;
+    for (let o = 0; o < d.length; o += 4) { d[o] = BG[0]; d[o + 1] = BG[1]; d[o + 2] = BG[2]; d[o + 3] = 255; }
+    for (let i = 0; i < N * N; i++) {
+      let x = pts[2 * i], p = pts[2 * i + 1];
+      let xf = x, pf = p;
+      if (mode === "kick") pf = p + f * ((kick[x] + 128) % 256 - 128);
+      else if (mode === "drift") xf = x + f * ((p + 128) % 256 - 128);
+      let px = Math.round(((xf % N) + N) % N * S), py = Math.round((((N / 2 - 1 - pf) % N) + N) % N * S);
+      const r = colors[4 * i], g = colors[4 * i + 1], b = colors[4 * i + 2];
+      for (let yy = 0; yy < S; yy++) { const row = ((py + yy) % PS) * PS; for (let xx = 0; xx < S; xx++) { const q = 4 * (row + (px + xx) % PS); d[q] = r; d[q + 1] = g; d[q + 2] = b; } }
+    }
+    pctx.putImageData(img, 0, 0);
+    return pcv;
+  }
+  function paintSmall(pts) {                   // 1 px per cell, for zooming
+    const d = simg.data;
+    for (let o = 0; o < d.length; o += 4) { d[o] = BG[0]; d[o + 1] = BG[1]; d[o + 2] = BG[2]; d[o + 3] = 255; }
+    for (let i = 0; i < N * N; i++) { const x = pts[2 * i], p = pts[2 * i + 1], q = 4 * ((((N / 2 - 1 - p) % N + N) % N) * N + x); d[q] = colors[4 * i]; d[q + 1] = colors[4 * i + 1]; d[q + 2] = colors[4 * i + 2]; d[q + 3] = 255; }
+    sctx.putImageData(simg, 0, 0); return small;
+  }
+  function panel(src, where, alpha = 1, dx = 0) {
+    const [x, y] = typeof where === "string" ? PANEL[where] : where;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(src, x + dx, y, PS, PS);
+    ctx.strokeStyle = "rgba(90,100,121,.5)"; ctx.lineWidth = 1; ctx.strokeRect(x + dx - 0.5, y - 0.5, PS + 1, PS + 1);
+    ctx.restore();
+  }
+  function portrait(x0, y0, size, alpha, frac, which) {
+    ctx.save(); ctx.globalAlpha = alpha;
+    for (const o of orbits) {
+      if (which && which !== (o.col[0] === 79 ? "island" : "sea")) continue;
+      ctx.fillStyle = `rgb(${o.col.join(",")})`;
+      const n = Math.floor(o.pts.length / 2 * frac);
+      for (let i = 0; i < n; i++) { const X = o.pts[2 * i], Y = o.pts[2 * i + 1]; ctx.fillRect(x0 + X * size, y0 + (((0.5 - Y) % 1 + 1) % 1) * size, 2, 2); }
+    }
+    ctx.restore();
+  }
+  function rotor(t0, t) {
+    const period = 0.85, u = Math.max(0, t - t0), n = Math.min(398, Math.floor(u / period)), f = (u / period) - n;
+    const [xa] = rotorStates[n], [xb, pb] = rotorStates[n + 1];
+    let adv = ((xb - xa) % 1 + 1.5) % 1 - 0.5;
+    const ang = 2 * Math.PI * (xa + f * adv);
+    const cx = 480, cy = 534, R = 250;
+    ctx.save();
+    ctx.strokeStyle = "rgba(90,100,121,.6)"; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(cx, cy, R, 0, 2 * Math.PI); ctx.stroke();
+    const flash = Math.max(0, 1 - f / 0.25);
+    if (flash > 0) { ctx.strokeStyle = `rgba(255,181,71,${0.85 * flash})`; ctx.lineWidth = 10; ctx.beginPath(); ctx.arc(cx, cy, R + 24, 0, 2 * Math.PI); ctx.stroke(); }
+    const ex = cx + R * Math.sin(ang), ey = cy - R * Math.cos(ang);
+    ctx.strokeStyle = "#DCE2EC"; ctx.lineWidth = 8; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey); ctx.stroke();
+    ctx.fillStyle = "#6FA8FF"; ctx.beginPath(); ctx.arc(ex, ey, 20, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = "#5A6479"; ctx.beginPath(); ctx.arc(cx, cy, 10, 0, 2 * Math.PI); ctx.fill();
+    ctx.restore();
+    // trail in phase space
+    const [px0, py0] = PANEL.right;
+    ctx.save(); ctx.fillStyle = "rgba(255,181,71,.9)";
+    for (let k = 0; k <= n; k++) { const [X, Y] = rotorStates[k]; ctx.fillRect(px0 + X * PS - 2, py0 + (((0.5 - Y) % 1 + 1) % 1) * PS - 2, 4, 4); }
+    const [X, Y] = rotorStates[n]; ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(px0 + X * PS, py0 + (((0.5 - Y) % 1 + 1) % 1) * PS, 7, 0, 2 * Math.PI); ctx.fill();
+    ctx.restore();
+  }
+  function phaseFrame(alpha, arrows) {
+    const [x, y] = PANEL.right;
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#0E131E"; ctx.fillRect(x, y, PS, PS);
+    ctx.strokeStyle = "rgba(90,100,121,.6)"; ctx.lineWidth = 1; ctx.strokeRect(x - 0.5, y - 0.5, PS + 1, PS + 1);
+    ctx.fillStyle = "#8A95AA"; ctx.font = 'italic 28px "STIX Two Text", serif'; ctx.textAlign = "center";
+    ctx.fillText("angle  x", x + PS / 2, y + PS + 40);
+    ctx.save(); ctx.translate(x - 30, y + PS / 2); ctx.rotate(-Math.PI / 2); ctx.fillText("momentum  p", 0, 0); ctx.restore();
+    if (arrows > 0) {
+      ctx.globalAlpha = alpha * arrows; ctx.strokeStyle = "#6FA8FF"; ctx.lineWidth = 3;
+      const arr = (x1, y1, x2, y2) => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); const a = Math.atan2(y2 - y1, x2 - x1); ctx.beginPath(); ctx.moveTo(x2, y2); ctx.lineTo(x2 - 14 * Math.cos(a - 0.4), y2 - 14 * Math.sin(a - 0.4)); ctx.lineTo(x2 - 14 * Math.cos(a + 0.4), y2 - 14 * Math.sin(a + 0.4)); ctx.closePath(); ctx.fillStyle = "#6FA8FF"; ctx.fill(); };
+      arr(x + 300, y - 14, x + 470, y - 14); arr(x + 300, y + PS + 60, x + 470, y + PS + 60);
+      arr(x + PS + 18, y + 470, x + PS + 18, y + 300); arr(x - 60, y + 470, x - 60, y + 300);
+    }
+    ctx.restore();
+  }
+  function errPlot(k, alpha) {
+    const x0 = 1040, y0 = 520, w = 740, h = 360;
+    ctx.save(); ctx.globalAlpha = alpha;
+    const X = kk => x0 + kk / KMAX * w, Y = e => y0 + (1 - (Math.log10(Math.max(e, 1e-17)) + 17) / 17) * h;
+    ctx.strokeStyle = "rgba(44,54,73,.8)"; ctx.lineWidth = 1; ctx.font = '16px "IBM Plex Mono", monospace'; ctx.fillStyle = "#5A6479";
+    for (const e of [-16, -12, -8, -4, 0]) { ctx.beginPath(); ctx.moveTo(x0, Y(10 ** e)); ctx.lineTo(x0 + w, Y(10 ** e)); ctx.stroke(); ctx.textAlign = "right"; ctx.fillText(`1e${e}`, x0 - 10, Y(10 ** e) + 5); }
+    ctx.textAlign = "center"; for (const kk of [0, 25, 50, 75, 100]) ctx.fillText(String(kk), X(kk), y0 + h + 26);
+    ctx.fillText("steps forward, then the same number back", x0 + w / 2, y0 + h + 54);
+    ctx.setLineDash([7, 6]); ctx.strokeStyle = "#6FA8FF"; ctx.lineWidth = 2; const yc = Y(0.5 / N);
+    ctx.beginPath(); ctx.moveTo(x0, yc); ctx.lineTo(x0 + w, yc); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle = "#6FA8FF"; ctx.textAlign = "left"; ctx.fillText("half a cell", x0 + 8, yc - 8);
+    ctx.strokeStyle = "#FF7A6B"; ctx.lineWidth = 3; ctx.beginPath();
+    const kmax = Math.floor(k);
+    for (let kk = 1; kk <= kmax; kk++) { const yy = Y(rtMedian[kk]); kk === 1 ? ctx.moveTo(X(kk), yy) : ctx.lineTo(X(kk), yy); }
+    ctx.stroke();
+    if (kmax >= 1) { ctx.fillStyle = "#fff"; ctx.beginPath(); ctx.arc(X(kmax), Y(rtMedian[kmax]), 5, 0, 2 * Math.PI); ctx.fill(); }
+    ctx.fillStyle = "#8A95AA"; ctx.font = '17px "IBM Plex Sans", sans-serif'; ctx.textAlign = "left";
+    ctx.fillText("MEDIAN ROUND-TRIP ERROR", x0, y0 - 18);
+    ctx.restore();
+  }
+  function kickChart(alpha) {
+    const x0 = 1024, y0 = 190, w = 768, h = 640;
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.fillStyle = "#0E131E"; ctx.fillRect(x0, y0, w, h);
+    const XS = 24, NX = 32, Y = v => y0 + h - 40 - v / 100 * (h - 80);
+    ctx.strokeStyle = "rgba(44,54,73,.9)"; ctx.lineWidth = 1;
+    for (let v = 0; v <= 90; v += 10) { ctx.beginPath(); ctx.moveTo(x0, Y(v)); ctx.lineTo(x0 + w, Y(v)); ctx.stroke(); }
+    ctx.fillStyle = "#A99CFF";
+    for (let x = 0; x < NX; x++) { const v = (kick[x] + 128) % 256 - 128; ctx.fillRect(x0 + x * XS + 2, Y(v), XS - 4, Y(0) - Y(v)); }
+    ctx.strokeStyle = "#FFB547"; ctx.lineWidth = 3; ctx.beginPath();
+    for (let i = 0; i <= NX * 8; i++) { const x = i / 8, v = N * K / (2 * Math.PI) * Math.sin(2 * Math.PI * x / N); i ? ctx.lineTo(x0 + (x + 0.5) * XS, Y(v)) : ctx.moveTo(x0 + (x + 0.5) * XS, Y(v)); }
+    ctx.stroke();
+    ctx.fillStyle = "#8A95AA"; ctx.font = '18px "IBM Plex Sans", sans-serif'; ctx.textAlign = "left";
+    ctx.fillText("KICK TABLE, FIRST 32 OF 256 ENTRIES (CELLS)", x0, y0 - 16);
+    ctx.textAlign = "right"; ctx.font = '15px "IBM Plex Mono", monospace'; ctx.fillStyle = "#5A6479";
+    for (let v = 0; v <= 90; v += 30) ctx.fillText(String(v), x0 - 8, Y(v) + 5); ctx.textAlign = "left";
+    ctx.fillStyle = "#FFB547"; ctx.fillText("exact kick  K sin x", x0 + 12, y0 + 30);
+    ctx.fillStyle = "#A99CFF"; ctx.fillText("rounded kick", x0 + 12, y0 + 56);
+    ctx.restore();
+  }
+  function zoomPanel(pts, z, alpha) {         // zoom about the camel's front leg, with cell borders
+    const src = paintSmall(pts), [x, y] = PANEL.single, cx = 100, cy = 176;
+    const viewCells = N / z, sx = cx - viewCells / 2, sy = cy - viewCells / 2;
+    ctx.save(); ctx.globalAlpha = alpha; ctx.imageSmoothingEnabled = false;
+    ctx.beginPath(); ctx.rect(x, y, PS, PS); ctx.clip();
+    ctx.drawImage(src, sx, sy, viewCells, viewCells, x, y, PS, PS);
+    const cell = PS / viewCells;
+    if (cell > 7) {
+      ctx.strokeStyle = `rgba(10,13,20,${Math.min(0.75, (cell - 7) / 8)})`; ctx.lineWidth = 1.5;
+      for (let i = Math.ceil(sx); i <= sx + viewCells; i++) { const X = x + (i - sx) * cell; ctx.beginPath(); ctx.moveTo(X, y); ctx.lineTo(X, y + PS); ctx.stroke(); }
+      for (let j = Math.ceil(sy); j <= sy + viewCells; j++) { const Y = y + (j - sy) * cell; ctx.beginPath(); ctx.moveTo(x, Y); ctx.lineTo(x + PS, Y); ctx.stroke(); }
+    }
+    ctx.restore();
+    ctx.save(); ctx.strokeStyle = "rgba(90,100,121,.5)"; ctx.strokeRect(x - 0.5, y - 0.5, PS + 1, PS + 1); ctx.restore();
+  }
+
+  // ---------- code listing ----------
+  const CODE = [
+    ["lbl", "lattice_fwd:"], ["", "    cbz   x1, done        ", "// no points"],
+    ["", "1:  ldrb  w3, [x0]        ", "// x"], ["", "    ldrb  w4, [x0, #1]    ", "// p"],
+    ["", "    ldrb  w5, [x2, x3]    ", "// kick[x]"], ["", "    add   w4, w4, w5      ", "// p + kick[x]"],
+    ["", "    add   w3, w3, w4      ", "// x + p"], ["", "    strb  w4, [x0, #1]    ", "// keep low byte"],
+    ["", "    strb  w3, [x0], #2    ", "// next point"], ["", "    subs  x1, x1, #1"], ["", "    b.ne  1b"], ["", "done: ret"],
+    ["", ""], ["lbl", "lattice_bwd:"], ["", "    cbz   x1, done"],
+    ["", "3:  ldrb  w3, [x0]"], ["", "    ldrb  w4, [x0, #1]"], ["", "    sub   w3, w3, w4      ", "// x - p"],
+    ["", "    and   w3, w3, #0xff"], ["", "    ldrb  w5, [x2, x3]    ", "// kick[x]"], ["", "    sub   w4, w4, w5      ", "// p - kick[x]"],
+    ["", "    strb  w4, [x0, #1]"], ["", "    strb  w3, [x0], #2"], ["", "    subs  x1, x1, #1"], ["", "    b.ne  3b"], ["", "done: ret"],
+  ];
+  $("code").innerHTML = CODE.map((r, i) => `<div class="ln" id="cl${i}"><span class="${r[0]}">${r[1]}</span><span class="c">${r[2] || ""}</span></div>`).join("");
+  const HL = { loads: [2, 3, 4, 15, 16, 19], arith: [5, 6, 7, 8, 17, 18, 20, 21, 22] };
+  function highlight(set) { CODE.forEach((_, i) => $("cl" + i).className = "ln" + (set && set.includes(i) ? " hl" : "")); }
+  let hlShown = null;
+
+  // ---------- helpers ----------
+  const op = (id, v) => { $(id).style.opacity = clamp01(v).toFixed(3); };
+  function place(id, x, y) { const e = $(id); e.style.left = x + "px"; e.style.top = y + "px"; }
+  function digitsHTML(v, ref) {
+    const a = v.toFixed(16), b = ref.toFixed(16); let out = "";
+    let bad = false; for (let i = 0; i < a.length; i++) { if (a[i] !== b[i]) bad = true; out += bad ? `<span class="r">${a[i]}</span>` : a[i]; }
+    return out;
+  }
+  function subtitleAt(t) {
+    const LL = T.lines;
+    for (let i = 0; i < LL.length; i++) {
+      const l = LL[i], next = LL[i + 1], until = next && next.start - l.end < 0.9 ? next.start : l.end + 0.35;
+      if (t >= l.start - 0.08 && t < until) return { text: l.show, a: sm(t, l.start - 0.08, l.start + 0.1) * (1 - sm(t, until - 0.12, until)) };
+    }
+    return { text: "", a: 0 };
+  }
+  const CAPS = { rotor: ["Scene 1", "The kicked rotor"], echo: ["Scene 2", "Loschmidt's echo"], lattice: ["Scene 3", "Round the kick, not the position"], proof: ["Scene 4", "Verified machine code"] };
+
+  // ---------- the timeline ----------
+  window.renderAt = function (t) {
+    const b = beat;
+    ctx.clearRect(0, 0, W, H);
+    for (const id of ["labL", "labR", "stepctr", "titlecard", "formula", "digits", "card", "code", "thm", "ep1", "ep1cap", "count", "outro", "caption"]) op(id, 0);
+    let cap = null;
+    for (const id of Object.keys(CAPS)) if (t >= b(id).start && t < b(id).end) cap = id;
+    if (cap) { $("cap-e").textContent = CAPS[cap][0]; $("cap-t").textContent = CAPS[cap][1]; op("caption", sm(t, b(cap).start, b(cap).start + 0.8) * (1 - sm(t, b(cap).end - 0.5, b(cap).end))); }
+
+    if (t < b("rotor").start) {
+      // ---- hook: scramble, split, run back ----
+      const kF = Math.round(KMAX * lin(t, line("open", 1).start, line("open", 2).end - 0.3));
+      const split = sm(t, line("open", 4).start, line("open", 4).end);
+      const back = Math.round(KMAX * sm(t, line("open", 5).start + 1.0, line("open", 6).start + 0.4));
+      const fade = sm(t, 0, 1.2) * (1 - 0.72 * sm(t, b("title").start - 0.2, b("title").start + 0.6));
+      if (split < 0.001) {
+        panel(paint(latt[kF]), "single", fade);
+        op("stepctr", fade); place("stepctr", 576, 930); $("stepctr").textContent = kF ? `step ${kF}` : "";
+      } else {
+        const dxL = (1 - split) * (PANEL.single[0] - PANEL.left[0]), dxR = (1 - split) * (PANEL.single[0] - PANEL.right[0]);
+        panel(paint(back ? fBack[back] : fFwd[KMAX]), "left", fade, dxL);
+        panel(paint(latt[KMAX - back]), "right", fade * split, dxR);
+        const la = sm(t, line("open", 5).start, line("open", 5).start + 0.8) * fade;
+        op("labL", la); op("labR", la); place("labL", 128, 112); place("labR", 1024, 112);
+        const done = back === KMAX;
+        $("labL").innerHTML = done ? `floating point · <b class="no">fragments return</b>` : "floating point (double precision)";
+        $("labR").innerHTML = done ? `exact lattice · <b class="ok">every pixel returns</b>` : "exact lattice";
+        op("stepctr", fade); place("stepctr", 576, 930); $("stepctr").textContent = back === KMAX ? "" : back ? `running back: ${KMAX - back} steps to go` : "step 100";
+      }
+      op("titlecard", sm(t, b("title").start - 0.1, b("title").start + 0.8) * (1 - sm(t, b("title").end, b("title").end + 0.6)));
+    } else if (t < b("echo").start) {
+      // ---- rotor & phase portrait ----
+      const a = sm(t, b("rotor").start, b("rotor").start + 1) * (1 - sm(t, b("rotor").end - 0.6, b("rotor").end));
+      phaseFrame(a, sm(t, line("rotor", 4).start, line("rotor", 4).start + 0.8) * (1 - sm(t, line("rotor", 5).start, line("rotor", 5).start + 0.8)));
+      ctx.save(); ctx.globalAlpha = a; rotor(b("rotor").start + 0.5, t); ctx.restore();
+      const isl = lin(t, line("rotor", 5).start, line("rotor", 5).end + 0.5), sea = lin(t, line("rotor", 6).start, line("rotor", 6).end + 1.0);
+      if (isl > 0) portrait(PANEL.right[0], PANEL.right[1], PS, a, isl, "island");
+      if (sea > 0) portrait(PANEL.right[0], PANEL.right[1], PS, a * 0.9, sea, "sea");
+      const fa = sm(t, line("rotor", 1).start, line("rotor", 1).start + 0.8) * a;
+      op("formula", fa);
+      $("formula").innerHTML = t >= line("rotor", 7).start
+        ? `undo: &nbsp;<b>x</b> ← x − p, &nbsp; <b>p</b> ← p − K sin x`
+        : `kick: &nbsp;<b>p</b> ← p + K sin x &nbsp;&nbsp; drift: &nbsp;<b>x</b> ← x + p`;
+      place("formula", 96, 846); $("formula").style.width = "768px";
+    } else if (t < b("lattice").start) {
+      // ---- Loschmidt's echo ----
+      const a = sm(t, b("echo").start, b("echo").start + 1) * (1 - sm(t, b("echo").end - 0.6, b("echo").end));
+      let k = 0;
+      k = Math.max(k, 40 * lin(t, line("echo", 1).start, line("echo", 1).end));
+      k = Math.max(k, 40 + 10 * lin(t, line("echo", 2).start, line("echo", 2).start + 1.5));
+      if (t < line("echo", 1).start) k = 0;
+      if (t >= line("echo", 3).start) k = 50 + 50 * lin(t, line("echo", 3).start, line("echo", 3).end);
+      const kk = Math.min(KMAX, Math.round(k));
+      panel(paint(rtCells[kk]), "left", a);
+      op("labL", a); place("labL", 128, 932); $("labL").innerHTML = `${kk} steps forward, ${kk} back`;
+      const ov = sm(t, line("echo", 4).start, line("echo", 4).start + 1) * (1 - sm(t, line("echo", 5).start, line("echo", 5).start + 0.8));
+      if (ov > 0) portrait(PANEL.left[0], PANEL.left[1], PS, 0.55 * ov * a, 1, "island");
+      const cardA = sm(t, line("echo", 5).start, line("echo", 5).start + 0.6);
+      op("digits", a * (1 - cardA)); $("d0").textContent = x0sea.toFixed(16);
+      $("d1").innerHTML = digitsHTML(rtX[kk], x0sea); $("dk").textContent = `after ${kk} steps forward and back`;
+      errPlot(kk, a * (1 - cardA));
+      const ca = sm(t, line("echo", 5).start, line("echo", 5).start + 0.6) * (1 - sm(t, b("echo").end - 0.4, b("echo").end));
+      if (ca > 0) {
+        ctx.save(); ctx.globalAlpha = 0.85 * ca; ctx.fillStyle = "#0A0D14"; ctx.fillRect(0, 0, W, H); ctx.restore();
+        op("card", ca); $("card-t").textContent = "Loschmidt's echo"; $("card-s").innerHTML = "reversible laws, irreversible arithmetic";
+      }
+    } else if (t < b("proof").start) {
+      // ---- the lattice: shears are permutations ----
+      const a = sm(t, b("lattice").start, b("lattice").start + 1) * (1 - sm(t, b("lattice").end - 0.6, b("lattice").end));
+      const L0 = line("lattice", 0), L1 = line("lattice", 1), L2 = line("lattice", 2), L3 = line("lattice", 3), L5 = line("lattice", 5), L6 = line("lattice", 6);
+      if (t < L1.start) {
+        const z = 1 + 4 * sm(t, L0.start + 0.3, L0.end);
+        zoomPanel(latt[0], z, a);
+      } else if (t < L2.start) {
+        const z = 5 - 4 * sm(t, L1.start, L1.start + 1.4);
+        const slide = sm(t, L1.start, L1.start + 1.4);
+        const p = (1 - slide) * PANEL.single[0] + slide * PANEL.left[0];
+        if (z > 1.01) zoomPanel(latt[0], z, a); else panel(paint(latt[0]), [p, 150], a);
+        kickChart(a * sm(t, L1.start + 0.8, L1.start + 1.6));
+      } else {
+        // kick then drift on step 1, slowly; then fast steps; then back to the start
+        let pts = latt[0], mode = null, f = 0, stepLabel = "";
+        const kickT0 = L2.start + 0.6, kickT1 = L2.end, driftT0 = L3.start + 0.3, driftT1 = L3.end;
+        if (t < driftT0) {
+          const g = sm(t, kickT0, kickT1);
+          if (g < 1) { mode = "kick"; f = g; } else { const q = latt[0].slice(); for (let i = 0; i < q.length; i += 2) q[i + 1] = (q[i + 1] + kick[q[i]]) & 255; pts = q; }
+          stepLabel = "kick: each column slides up by kick[x]";
+        } else if (t < L5.start) {
+          const g = sm(t, driftT0, driftT1);
+          const q = latt[0].slice(); for (let i = 0; i < q.length; i += 2) q[i + 1] = (q[i + 1] + kick[q[i]]) & 255;
+          if (g < 1) { pts = q; mode = "drift"; f = g; } else pts = latt[1];
+          stepLabel = "drift: each row slides sideways by p";
+        } else if (t < L6.start) {
+          const s = 1 + 39 * lin(t, L5.start, L6.start - 0.2), n = Math.floor(s), fr = s - n;
+          const q = latt[n].slice(); for (let i = 0; i < q.length; i += 2) q[i + 1] = (q[i + 1] + kick[q[i]]) & 255;
+          if (fr < 0.5) { pts = latt[n]; mode = "kick"; f = ease(fr * 2); } else { pts = q; mode = "drift"; f = ease(fr * 2 - 1); }
+          stepLabel = `step ${n}`;
+        } else {
+          const s = 40 * (1 - lin(t, L6.start + 0.2, L6.end + 0.8)), n = Math.ceil(s);
+          pts = latt[Math.max(0, Math.min(40, n))]; stepLabel = n > 0 ? `running back: step ${n}` : "back at the start: every cell in place";
+        }
+        const cx = (1 - a) * 0 + PANEL.single[0];
+        panel(paint(pts, mode, f), "single", a);
+        op("stepctr", a); place("stepctr", 576, 930); $("stepctr").textContent = stepLabel;
+      }
+      const cnt = sm(t, line("lattice", 4).start, line("lattice", 4).start + 0.6) * (1 - sm(t, L6.end, L6.end + 0.6));
+      op("count", cnt * a); $("count").innerHTML = "65,536 cells in<br>65,536 cells out<br><br>no collisions<br>no holes";
+      const ce = $("count"); ce.style.left = "1400px"; ce.style.right = "auto"; ce.style.top = "420px"; ce.style.textAlign = "left"; ce.style.lineHeight = "1.5";
+    } else if (t < b("close").start) {
+      // ---- the machine code and the theorem ----
+      const a = sm(t, b("proof").start, b("proof").start + 1) * (1 - sm(t, b("proof").end - 0.6, b("proof").end));
+      op("code", a);
+      const P = i => line("proof", i);
+      let set = null;
+      if (t >= P(1).start && t < P(2).start) set = HL.loads;
+      else if (t >= P(2).start && t < P(3).start) set = HL.arith;
+      if (set !== hlShown) { highlight(set); hlShown = set; }
+      op("thm", a * sm(t, P(3).start, P(3).start + 0.8));
+      op("thm2", sm(t, P(5).start, P(5).start + 0.8)); op("thm3", sm(t, P(6).start, P(6).start + 0.8));
+    } else if (t < b("outro").start) {
+      // ---- close: area on a lattice; the camel comes home ----
+      const a = sm(t, b("close").start, b("close").start + 1);
+      const C = i => line("close", i);
+      if (t < C(3).start) {
+        panel(paint(latt[KMAX]), "left", a);
+        const e = sm(t, C(0).start, C(0).start + 0.8) * (1 - sm(t, C(2).start, C(2).start + 0.8));
+        $("ep1").src = window.EP1_JPG; op("ep1", e * a); op("ep1cap", e * a);
+        const cnt = sm(t, C(2).start, C(2).start + 0.8);
+        op("count", cnt); $("count").textContent = "65,536 cells, 65,536 places, one each";
+        const ce = $("count"); ce.style.left = "128px"; ce.style.right = "auto"; ce.style.width = "768px"; ce.style.textAlign = "center"; ce.style.top = "930px"; ce.style.lineHeight = "1.3";
+      } else {
+        const s = KMAX * (1 - sm(t, C(3).start, C(3).end + 0.6));
+        panel(paint(latt[Math.round(s)]), "single", 1);
+      }
+    } else {
+      const a = sm(t, b("outro").start + 0.2, b("outro").start + 1.4);
+      panel(paint(latt[0]), "single", 1 - 0.8 * a);
+      op("outro", a);
+    }
+    const sub = subtitleAt(t);
+    $("subText").textContent = sub.text; op("sub", sub.a);
+  };
+
+  const camelImage = new Image();
+  window.filmReady = new Promise(res => { camelImage.onload = () => document.fonts.ready.then(() => { prepare(); window.renderAt(0); res(true); }); });
+  camelImage.src = window.CAMEL_PNG;
+  window.DURATION = T.duration;
+  const q = new URLSearchParams(location.search);
+  if (q.has("t")) window.filmReady.then(() => window.renderAt(+q.get("t")));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+[
+ {
+  "i": 0,
+  "ratio": 1.0,
+  "say": "This picture is about to be scrambled by chaos.",
+  "heard": "This picture is about to be scrambled by chaos."
+ },
+ {
+  "i": 1,
+  "ratio": 1.0,
+  "say": "Each step moves every pixel by a simple rule from physics.",
+  "heard": "Each step moves every pixel by a simple rule from physics."
+ },
+ {
+  "i": 2,
+  "ratio": 1.0,
+  "say": "After a hundred steps, it looks like noise.",
+  "heard": "After a hundred steps, it looks like noise."
+ },
+ {
+  "i": 3,
+  "ratio": 1.0,
+  "say": "The rule can be run backwards exactly, at least on paper.",
+  "heard": "The rule can be run backwards exactly, at least on paper."
+ },
+ {
+  "i": 4,
+  "ratio": 1.0,
+  "say": "So let's run it backwards on a computer.",
+  "heard": "So let's run it backwards on a computer."
+ },
+ {
+  "i": 5,
+  "ratio": 1.0,
+  "say": "On the left, ordinary floating point. On the right, a version that lives on a grid.",
+  "heard": "On the left, ordinary floating point. On the right, a version that lives on a grid."
+ },
+ {
+  "i": 6,
+  "ratio": 1.0,
+  "say": "Floating point brings back fragments. The grid brings back every pixel.",
+  "heard": "Floating point brings back fragments. The grid brings back every pixel."
+ },
+ {
+  "i": 7,
+  "ratio": 1.0,
+  "say": "Running chaos backwards.",
+  "heard": "Running Chaos Backwards"
+ },
+ {
+  "i": 8,
+  "ratio": 1.0,
+  "say": "The rule is the kicked rotor, a standard model of chaos.",
+  "heard": "The rule is the kicked rotor, a standard model of chaos."
+ },
+ {
+  "i": 9,
+  "ratio": 1.0,
+  "say": "Picture a rod spinning freely, kicked at regular intervals.",
+  "heard": "Picture a rod spinning freely, kicked at regular intervals."
+ },
+ {
+  "i": 10,
+  "ratio": 1.0,
+  "say": "Each kick changes its speed by an amount that depends on its angle.",
+  "heard": "Each kick changes its speed by an amount that depends on its angle."
+ },
+ {
+  "i": 11,
+  "ratio": 1.0,
+  "say": "Between kicks, the angle drifts forward at that speed.",
+  "heard": "Between kicks, the angle drifts forward at that speed."
+ },
+ {
+  "i": 12,
+  "ratio": 1.0,
+  "say": "Angle and momentum both wrap around, so every state is a point on a torus.",
+  "heard": "Angle and momentum both wrap around, so every state is a point on a torus."
+ },
+ {
+  "i": 13,
+  "ratio": 1.0,
+  "say": "Some starting points circle forever on smooth curves. These are islands of stability.",
+  "heard": "Some starting points circle forever on smooth curves. These are islands of stability."
+ },
+ {
+  "i": 14,
+  "ratio": 1.0,
+  "say": "Everywhere else is a chaotic sea.",
+  "heard": "Everywhere else is a chaotic sea."
+ },
+ {
+  "i": 15,
+  "ratio": 1.0,
+  "say": "Undo the drift, then undo the kick, and you are back where you started.",
+  "heard": "Undo the drift, then undo the kick, and you are back where you started."
+ },
+ {
+  "i": 16,
+  "ratio": 0.875,
+  "say": "A floating-point number carries about sixteen digits.",
+  "heard": "A floating point number carries about 16 digits."
+ },
+ {
+  "i": 17,
+  "ratio": 1.0,
+  "say": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps.",
+  "heard": "In the chaotic sea, a tiny error grows about a hundredfold every ten steps."
+ },
+ {
+  "i": 18,
+  "ratio": 0.846,
+  "say": "Run fifty steps forward and fifty back, and the first pixels miss home.",
+  "heard": "Run 50 steps forward and 50 back and the first pixels miss home."
+ },
+ {
+  "i": 19,
+  "ratio": 1.0,
+  "say": "After a hundred, only the islands come back.",
+  "heard": "After a hundred, only the islands come back."
+ },
+ {
+  "i": 20,
+  "ratio": 1.0,
+  "say": "The picture that returns is a map of where the motion is chaotic.",
+  "heard": "The picture that returns is a map of where the motion is chaotic."
+ },
+ {
+  "i": 21,
+  "ratio": 1.0,
+  "say": "This is Losh-mitt's echo. The laws run both ways, but rounding errors do not.",
+  "heard": "This is Losh Mitt's echo. The laws run both ways, but rounding errors do not."
+ },
+ {
+  "i": 22,
+  "ratio": 0.667,
+  "say": "Now put the world on a grid of two hundred fifty-six by two hundred fifty-six cells.",
+  "heard": "Now put the world on a grid of 256 by 256 cells."
+ },
+ {
+  "i": 23,
+  "ratio": 1.0,
+  "say": "Round each kick to a whole number of cells, and keep everything else exact.",
+  "heard": "Round each kick to a whole number of cells and keep everything else exact."
+ },
+ {
+  "i": 24,
+  "ratio": 1.0,
+  "say": "Then a kick slides each column up by a whole number of cells.",
+  "heard": "Then a kick slides each column up by a whole number of cells."
+ },
+ {
+  "i": 25,
+  "ratio": 1.0,
+  "say": "A drift slides each row sideways by a whole number of cells.",
+  "heard": "A drift slides each row sideways by a whole number of cells."
+ },
+ {
+  "i": 26,
+  "ratio": 1.0,
+  "say": "Sliding rows and columns can't make two cells collide, or leave a hole.",
+  "heard": "Sliding rows and columns can't make two cells collide or leave a hole."
+ },
+ {
+  "i": 27,
+  "ratio": 0.609,
+  "say": "So each step just reshuffles the sixty-five thousand, five hundred thirty-six cells.",
+  "heard": "So each step just reshuffles the 65,536 cells."
+ },
+ {
+  "i": 28,
+  "ratio": 1.0,
+  "say": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks.",
+  "heard": "Nothing merges and nothing is lost, so running backwards is exact, however chaotic it looks."
+ },
+ {
+  "i": 29,
+  "ratio": 0.818,
+  "say": "Here is the machine code. Eleven arm instructions forward, twelve back.",
+  "heard": "Here is the machine code. 11 arm instructions forward, 12 back."
+ },
+ {
+  "i": 30,
+  "ratio": 0.774,
+  "say": "Each point is two bytes, and the kicks are a table of two hundred fifty-six bytes.",
+  "heard": "Each point is 2 bytes, and the kicks are a table of 256 bytes."
+ },
+ {
+  "i": 31,
+  "ratio": 0.8,
+  "say": "Byte arithmetic wraps around at two hundred fifty-six, which is exactly the torus.",
+  "heard": "Byte Arithmetic wraps around at 256, which is exactly the torus."
+ },
+ {
+  "i": 32,
+  "ratio": 0.875,
+  "say": "In the H-O-L Light theorem prover, we proved that these exact bytes compute this map,",
+  "heard": "In the HOL light theorem prover, we proved that these exact bytes compute this map."
+ },
+ {
+  "i": 33,
+  "ratio": 1.0,
+  "say": "for every input, every kick table, and any number of points.",
+  "heard": "for every input, every kick table, and any number of points."
+ },
+ {
+  "i": 34,
+  "ratio": 1.0,
+  "say": "We also proved that the second routine undoes the first.",
+  "heard": "We also proved that the second routine undoes the first."
+ },
+ {
+  "i": 35,
+  "ratio": 0.882,
+  "say": "The proof runs on a formal model of the arm processor from the s-two-n bignum project.",
+  "heard": "The proof runs on a formal model of the ARM processor from the S2N Bignum project."
+ },
+ {
+  "i": 36,
+  "ratio": 1.0,
+  "say": "It covers the machine code, not the loop that calls it or the pixels you see.",
+  "heard": "It covers the machine code, not the loop that calls it or the pixels you see."
+ },
+ {
+  "i": 37,
+  "ratio": 1.0,
+  "say": "Last time, being symplectic meant a ball could not be squeezed.",
+  "heard": "Last time, being symplectic meant a ball could not be squeezed."
+ },
+ {
+  "i": 38,
+  "ratio": 1.0,
+  "say": "In two dimensions, it just means keeping area.",
+  "heard": "In two dimensions, it just means keeping area."
+ },
+ {
+  "i": 39,
+  "ratio": 1.0,
+  "say": "On a grid, keeping area means never losing a single pixel.",
+  "heard": "On a grid, keeping area means never losing a single pixel."
+ },
+ {
+  "i": 40,
+  "ratio": 1.0,
+  "say": "Run it back, and the camel comes home.",
+  "heard": "Run it back and the camel comes home."
+ },
+ {
+  "i": 41,
+  "ratio": 1.0,
+  "say": "The interactive version and the proof are linked below.",
+  "heard": "The interactive version and the proof are linked below."
+ }
+]
