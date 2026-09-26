@@ -1,0 +1,5 @@
+.venv/
+runs/
+build/*
+!build/lattice_echo.o
+proto/*.png
