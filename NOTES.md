@@ -60,9 +60,10 @@ How the proof is organised:
   with its 16 byte-lane values (`ABBREV_LANES_TAC`). The lane facts of the
   OR-ed lookup come from `KICK_CHAIN_LANE`: of the eight 32-byte TBL lookups
   exactly one is in range on each lane, the others return 0.
-- The body simulates in about 15 s. Hearth recorded replay of the whole file
-  (`runs/20260926T180101Z-69489-lattice_fwd_neon-5e5199`): 401 s, 11 bindings
-  proved, no new axioms.
+- The body simulates in about 15 s. Hearth recorded replays of the whole file:
+  `runs/20260926T180101Z-69489-lattice_fwd_neon-5e5199` (401 s) and, after
+  updating Hearth to main@49b9182, `runs/20260926T181718Z-71664-lattice_fwd_neon-1d4007`
+  (479 s); both 11/11 bindings proved, 0 new axioms.
 
 ## Proof-authoring setup (Linux guest)
 
@@ -90,10 +91,16 @@ etc.). Lessons specific to the vector proof:
 - `kill -INT` on the warm HOL process interrupts the running tactic and
   returns to the toplevel with the goalstack intact.
 
-Replay (one seat, run it once at the milestone):
+Replay (one seat, run it once at the milestone; Hearth checkout
+`~/src/hol-hearth-review-20260922` in the dev guest, main@49b9182 or later):
 
 ```sh
 HOL_WORKBENCH_RUNTIME_CONFIG=~/.config/hol-light-workbench/runtime.toml \
   ./hearth prove /Users/boxer/ben-advice/lattice-echo/proofs/lattice_fwd_neon.ml \
   --profile s2n-arm --timeout 3600 --run-root /Users/boxer/ben-advice/lattice-echo/runs
+./hearth inspect /Users/boxer/ben-advice/lattice-echo/runs --binding LATTICE_FWD_NEON_SUBROUTINE_CORRECT
 ```
+
+For a check that does not depend on Hearth at all, `hearth export-replay RUNDIR`
+writes a shell script that starts a cold HOL Light, loads the s2n-arm profile
+recipe and then the exact source, and prints the axiom count before and after.
