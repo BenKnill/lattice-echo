@@ -9,3 +9,6 @@ video/*.wav
 video/*.mp4
 video/*.log
 video/stills/
+video/q*.png
+video/qcheck.jpg
+proto/page.jpg
