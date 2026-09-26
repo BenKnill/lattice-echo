@@ -2,6 +2,7 @@
 runs/
 build/*
 !build/lattice_echo.o
+!build/lattice_fwd_neon.o
 proto/*.png
 video/node_modules/
 video/clips/
