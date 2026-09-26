@@ -1,0 +1,23 @@
+#!/bin/bash
+# Send OCaml/HOL phrases to the persistent HOL session in the dev guest and
+# print only the output they produce.
+#   tools/hol 'g `1 + 1 = 2`;;'        (phrases as arguments)
+#   tools/hol < file.ml                 (phrases on stdin)
+#   tools/hol --file path/on/mac.ml     (loadt a whole file)
+# Waits up to $HOL_WAIT seconds (default 600).
+set -euo pipefail
+id="M$(date +%s%N)$RANDOM"
+if [ "${1:-}" = "--file" ]; then
+  payload="loadt \"$2\";;"
+elif [ $# -gt 0 ]; then
+  payload="$*"
+else
+  payload="$(cat)"
+fi
+tmp=$(mktemp /Users/boxer/ben-advice/lattice-echo/runs/cmd.XXXXXX)
+printf '%s\nprint_string "\\n@@%s@@\\n";;\n' "$payload" "$id" > "$tmp"
+orb -m dev bash -c "cat '$tmp' >> ~/lattice-repl/cmds.ml; for i in \$(seq 1 ${HOL_WAIT:-600}); do grep -q '^@@$id@@' ~/lattice-repl/out.log && break; sleep 1; done;
+  awk -v start=\"\$(cat ~/lattice-repl/last-offset 2>/dev/null || echo 0)\" 'NR>start' ~/lattice-repl/out.log | sed -e 's/\x1b\[[0-9;]*m//g' | grep -v '^@@$id@@' ;
+  grep -n '^@@$id@@' ~/lattice-repl/out.log | cut -d: -f1 > ~/lattice-repl/last-offset;
+  grep -q '^@@$id@@' ~/lattice-repl/out.log || echo '[hol: timed out waiting]'"
+rm -f "$tmp"
