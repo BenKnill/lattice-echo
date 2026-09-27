@@ -21,7 +21,7 @@
 (* ========================================================================= *)
 
 needs "arm/proofs/base.ml";;
-loadt "proofs/lattice_echo.ml";;
+needs "proofs/lattice_echo.ml";;
 
 let lattice_fwd_neon_mc = define_assert_from_elf "lattice_fwd_neon_mc"
   "build/lattice_fwd_neon.o"

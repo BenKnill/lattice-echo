@@ -92,14 +92,24 @@ etc.). Lessons specific to the vector proof:
   returns to the toplevel with the goalstack intact.
 
 Replay (one seat, run it once at the milestone; Hearth checkout
-`~/src/hol-hearth-review-20260922` in the dev guest, main@49b9182 or later):
+`~/src/hol-hearth-review-20260922` in the dev guest, main@49b9182 or later).
+The reference proof is a prepared basis: Hearth checks `proofs/lattice_echo.ml`
+once (319 s), keeps that HOL state resident, and checks any leaf that imports
+it with a literal `needs` in a fresh child of it. The NEON leaf then takes
+106 s instead of 479 s (`runs/20260927T141225Z-133644-lattice_fwd_neon-528416`).
 
 ```sh
 HOL_WORKBENCH_RUNTIME_CONFIG=~/.config/hol-light-workbench/runtime.toml \
   ./hearth prove /Users/boxer/ben-advice/lattice-echo/proofs/lattice_fwd_neon.ml \
-  --profile s2n-arm --timeout 3600 --run-root /Users/boxer/ben-advice/lattice-echo/runs
+  --profile s2n-arm --basis /Users/boxer/ben-advice/lattice-echo/proofs/lattice_echo.ml \
+  --timeout 3600 --run-root /Users/boxer/ben-advice/lattice-echo/runs
 ./hearth inspect /Users/boxer/ben-advice/lattice-echo/runs --binding LATTICE_FWD_NEON_SUBROUTINE_CORRECT
+./hearth basis            # lists live bases; `basis retire KEY` frees one (about 1.9 GB each)
 ```
+
+A new kernel proof should start `needs "arm/proofs/base.ml";; needs
+"proofs/lattice_echo.ml";;` and be checked with the same `--basis` line; editing
+`lattice_echo.ml` itself re-prepares the basis.
 
 For a check that does not depend on Hearth at all, `hearth export-replay RUNDIR`
 writes a shell script that starts a cold HOL Light, loads the s2n-arm profile
