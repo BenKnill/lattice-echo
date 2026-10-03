@@ -61,6 +61,7 @@
 <body>
 <div class="wrap">
   <header>
+    <a href="live.html">Open the live explanation: one cell at a time →</a>
     <h1>Running Chaos Backwards</h1>
     <p class="lede">Scramble a picture with the kicked rotor, then run the same rule backwards. Floating point brings back only the islands of stability. A lattice version brings back every pixel.</p>
   </header>
@@ -165,7 +166,7 @@
     const f = okF / (N * N), l = okL / (N * N);
     $("statF").textContent = `${(100 * f).toFixed(1)}% of pixels in place`;
     $("statF").className = "stat " + (f > 0.999 ? "ok" : step === 0 ? "no" : "");
-    $("statL").textContent = `${(100 * l).toFixed(1)}% of pixels in place`;
+    $("statL").textContent = `${N * N - okL} / ${N * N} coordinate mismatches`;
     $("statL").className = "stat " + (l > 0.999 ? "ok" : "");
     $("status").textContent = dir > 0 ? `scrambling: step ${step}` : dir < 0 ? `running back: ${step} to go` : step ? `scrambled: ${step} steps` : "step 0";
     $("bwd").disabled = step === 0 || dir !== 0;
