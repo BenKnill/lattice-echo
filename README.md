@@ -53,6 +53,6 @@ Built with Claude (Anthropic's Claude Opus 5.5) in Claude Code.
 
 ## Live rehearsal edition
 
-Open `docs/live.html` for the 8×8 kick/drift teaching grid and the 65,536-cell comparison. Follow a numbered identity through the two shears, undo them in reverse order, then run the large echo. `docs/live-guide.html` provides short cues and the exact proof boundary. The float counter reports display-bin mismatches; the lattice counter compares exact integer coordinates.
+Open `docs/live.html` directly for four guided scenes: predict the return, scramble, reverse, and establish the claim. Arrow keys or the scene buttons advance the sequence. The final scene includes the 8×8 teaching grid; follow an identity through kick, drift and the two inverse half-steps. `docs/live-guide.html` provides one printable page of cues and the exact proof boundary. All scripts and the embedded image are local, so the live page needs no network access. The float counter reports display-bin mismatches; the lattice counter compares exact integer coordinates.
 
 Run `node tests/live-models.mjs` for exhaustive cell round trips over eight kick tables and five rotation angles. Run `node tests/live-controls.mjs` for keyboard, reset, pause/reverse and counter regressions in a minimal DOM harness. Neither is a new HOL proof replay or native machine-code comparison; browser rendering requires separate QA.
