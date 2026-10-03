@@ -1,0 +1,29 @@
+$ date -u +%Y-%m-%dT%H:%M:%SZ
+2026-10-03T13:55:56Z
+$ git rev-parse HEAD
+c55be8dd4bdc783790f565475bb4dc5ac321d6f9
+$ sha256sum docs/live.html docs/live.css docs/live.js docs/live-guide.html docs/lattice.js tests/live-controls.mjs tests/live-models.mjs
+1fd88cbdc855b609a10ff260e552927724d203ac66d8452c800ace0762474370  docs/live.html
+90b50f0ac1d6cb0ac17273ec7e07fff93cbc91d244e569e07660215b0271a8ac  docs/live.css
+fb9444e37805939a8730a5ce904703dfc3f5a2c73253e73765e8c8d7ce1f5e97  docs/live.js
+aa1d94592644d151090aa1f04be55d232ebfcc8e5cb41f7e4552ebb3c153b378  docs/live-guide.html
+112b6491ad36c9fb1e55e6e7d231f0cb9743fceea085e1d8bc7fa8a43891e274  docs/lattice.js
+f972101ca15176db8ea783e1dd99e7540e00ecfe720ed521d408dcc66e3567eb  tests/live-controls.mjs
+40e5112048ff7a6d51ed2e47da6c40e4fe12f2999fef183d7184afc743dc3aba  tests/live-models.mjs
+$ node --check docs/live.js
+$ git diff --check
+$ taskset -c 11 node tests/live-models.mjs
+PASS lattice K=-5: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice K=0: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice K=0.5: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice K=2: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice K=4: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice K=10: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice constant255: 65,536 distinct, exact inverse both orders, 200-step round trip
+PASS lattice sawtooth: 65,536 distinct, exact inverse both orders, 200-step round trip
+Float comparison: 43708 display-bin mismatches, 65520 strict coordinate mismatches (engine-specific empirical result)
+No native kernel execution or proof replay claimed
+$ taskset -c 11 node tests/live-controls.mjs
+PASS Lattice controller: four scenes forward/back; all five toy phases; focused-button arrows; slider protection; native Space; scramble/pause/back/restart/reset; exact counters; timer cleanup; deterministic presentation reset
+DOM harness only: browser rendering is not tested
+Local validation completed successfully. Browser rendering is tested separately in the offline kit.
