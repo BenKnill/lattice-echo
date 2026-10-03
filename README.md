@@ -49,3 +49,10 @@ the kernel, the float comparison, or anything drawn on screen.
 - `video/`: narration script, voice and render pipeline, film page
 
 Built with Claude (Anthropic's Claude Opus 5.5) in Claude Code.
+
+
+## Live rehearsal edition
+
+Open `docs/live.html` for the 8×8 kick/drift teaching grid and the 65,536-cell comparison. Follow a numbered identity through the two shears, undo them in reverse order, then run the large echo. `docs/live-guide.html` provides short cues and the exact proof boundary. The float counter reports display-bin mismatches; the lattice counter compares exact integer coordinates.
+
+Run `node tests/live-models.mjs` for exhaustive cell round trips over eight kick tables and five rotation angles. Run `node tests/live-controls.mjs` for keyboard, reset, pause/reverse and counter regressions in a minimal DOM harness. Neither is a new HOL proof replay or native machine-code comparison; browser rendering requires separate QA.
